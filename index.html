@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shell TikTok Market</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="authPage" class="page">
+  <h1>Shell TikTok</h1>
+  <p>Marketplace sécurisée de comptes TikTok</p>
+
+  <input type="email" id="email" placeholder="Email" />
+  <input type="password" id="password" placeholder="Mot de passe" />
+
+  <button onclick="register()">Inscription</button>
+  <button onclick="login()">Connexion</button>
+</div>
+
+<!-- APP -->
+<div id="appPage" class="page hidden">
+
+  <!-- ACCUEIL -->
+  <section id="home">
+    <h2>Bienvenue 👋</h2>
+    <p>
+      Shell TikTok est une plateforme sécurisée.  
+      Je suis intermédiaire entre acheteur et vendeur.  
+      Commission : <b>10%</b>.
+    </p>
+  </section>
+
+  <!-- ACHETER -->
+  <section id="buy" class="hidden">
+    <h2>Acheter un compte</h2>
+    <div id="accountsList"></div>
+  </section>
+
+  <!-- VENDRE -->
+  <section id="sell" class="hidden">
+    <h2>Vendre un compte</h2>
+
+    <input id="username" placeholder="Username TikTok" />
+    <input id="followers" type="number" placeholder="Abonnés" />
+    <input id="price" type="number" placeholder="Prix (FCFA)" />
+    <input type="file" id="screenshot" />
+
+    <button onclick="sellAccount()">Mettre en vente</button>
+  </section>
+
+  <!-- MES VENTES -->
+  <section id="sales" class="hidden">
+    <h2>Mes ventes</h2>
+    <div id="mySales"></div>
+  </section>
+
+  <!-- MON COMPTE -->
+  <section id="account" class="hidden">
+    <h2>Mon compte</h2>
+    <p>💼 Portefeuille : <span id="wallet">0</span> FCFA</p>
+    <button onclick="requestWithdraw()">Demander un retrait</button>
+    <button onclick="logout()">Déconnexion</button>
+  </section>
+
+  <!-- NAVIGATION -->
+  <nav>
+    <button onclick="show('home')">🏠</button>
+    <button onclick="show('buy')">🛒</button>
+    <button onclick="show('sell')">➕</button>
+    <button onclick="show('sales')">📊</button>
+    <button onclick="show('account')">👤</button>
+  </nav>
+
+</div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
