@@ -1,9 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-/* FIREBASE CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyA2wEZMelhCwNYKs7vtgEFhcXkPxXeTx1U",
   authDomain: "shell-toktok.firebaseapp.com",
@@ -47,7 +46,6 @@ window.register = () => {
 };
 
 window.logout = () => signOut(auth);
-
 window.showRegister = () => {
   document.getElementById("registerBox").classList.remove("hidden");
 };
@@ -83,37 +81,41 @@ window.submitAccount = async () => {
   });
 
   document.getElementById("successMessage").classList.remove("hidden");
-  loadAccounts();
+  setTimeout(()=>document.getElementById("successMessage").classList.add("hidden"), 3000);
   showSection("buy");
 };
 
-/* AFFICHER LES COMPTES */
-async function loadAccounts(){
+/* REAL-TIME DISPLAY DES COMPTES */
+function loadAccounts(){
   const list = document.getElementById("accountsList");
-  list.innerHTML = "";
-  const snap = await getDocs(collection(db,"accounts"));
-  snap.forEach(d=>{
-    const a = d.data();
-    if(a.status==="en attente"){
-      list.innerHTML += `<div class="card">
-        <img src="${a.image}" width="100%">
-        <b>@${a.username}</b><br>
-        ${a.followers} abonnés<br>
-        ${a.price} FCFA
-      </div>`;
-    }
+  const col = collection(db,"accounts");
+  onSnapshot(col, snap=>{
+    list.innerHTML = "";
+    snap.forEach(d=>{
+      const a=d.data();
+      if(a.status==="en attente"){
+        list.innerHTML += `<div class="card">
+          <img src="${a.image}" width="100%" style="border-radius:8px;">
+          <b>@${a.username}</b><br>
+          ${a.followers} abonnés<br>
+          ${a.price} FCFA
+        </div>`;
+      }
+    });
   });
 }
 
 /* MES TRANSACTIONS */
-async function loadTransactions(){
+function loadTransactions(){
   const myTrans = document.getElementById("myTransactions");
-  myTrans.innerHTML="";
-  const snap = await getDocs(collection(db,"accounts"));
-  snap.forEach(d=>{
-    const a=d.data();
-    if(a.userId===auth.currentUser.uid){
-      myTrans.innerHTML+=`<div class="card">@${a.username} - ${a.status}</div>`;
-    }
+  const col = collection(db,"accounts");
+  onSnapshot(col,snap=>{
+    myTrans.innerHTML="";
+    snap.forEach(d=>{
+      const a=d.data();
+      if(a.userId===auth.currentUser.uid){
+        myTrans.innerHTML+=`<div class="card">@${a.username} - ${a.status}</div>`;
+      }
+    });
   });
-}
+            }
