@@ -1,20 +1,20 @@
 body {
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: Arial, sans-serif;
   background: #f2f6ff;
 }
 
-.hidden { display: none; }
+.hidden { display: none !important; }
 
 /* AUTH */
 .auth-container {
   background: #0a2cff;
-  height: 100vh;
   color: white;
+  height: 100vh;
+  padding: 25px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 25px;
 }
 
 .auth-container input, button {
@@ -43,14 +43,14 @@ button.outline {
 /* PAGES */
 .page {
   padding: 15px;
-  padding-bottom: 80px;
+  padding-bottom: 90px;
 }
 
 .card {
   background: white;
   padding: 15px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,.1);
   margin-top: 15px;
 }
 
@@ -60,17 +60,17 @@ button.outline {
   color: white;
   padding: 10px;
   border-radius: 8px;
-  animation: slide 15s linear infinite;
   white-space: nowrap;
   overflow: hidden;
+  animation: slide 15s linear infinite;
 }
 
 @keyframes slide {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
+  from { transform: translateX(100%); }
+  to { transform: translateX(-100%); }
 }
 
-/* NAV BAR */
+/* NAV */
 .bottom-nav {
   position: fixed;
   bottom: 0;
