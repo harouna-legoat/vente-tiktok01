@@ -2,16 +2,16 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TikTok Shell</title>
-  
-  <!-- Icônes pro -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Icônes -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- PAGE DE CONNEXION / INSCRIPTION -->
+<!-- PAGE AUTH -->
 <div id="authPage" class="auth-container">
   <div class="auth-box">
     <h1>TikTok Shell</h1>
@@ -33,7 +33,7 @@
   </div>
 </div>
 
-<!-- APPLICATION (cachée par défaut) -->
+<!-- APP PRINCIPALE -->
 <div id="appPage" class="hidden">
 
   <!-- NAVIGATION -->
@@ -48,15 +48,20 @@
 
   <!-- ACCUEIL -->
   <section id="home" class="section">
-    <div class="marquee">
-      Bienvenue sur TikTok Shell — Vente et achat de comptes TikTok sécurisés — Commission 10%
+    <div class="card">
+      <h2>Bienvenue sur TikTok Shell</h2>
+      <p>
+        TikTok Shell vous permet de vendre ou d’acheter des comptes TikTok en toute sécurité. 
+        Notre plateforme prend 10% de commission sur chaque vente.
+      </p>
     </div>
+
     <div class="card">
       <h2>Comment ça fonctionne ?</h2>
       <ol>
-        <li>Le vendeur dépose ses informations de compte.</li>
-        <li>L’acheteur paie via la plateforme sécurisée.</li>
-        <li>Après vérification, le vendeur reçoit son argent.</li>
+        <li>Le vendeur dépose ses informations : nom d’utilisateur, nombre d’abonnés, prix, capture d’écran et WhatsApp.</li>
+        <li>L’acheteur paie via la plateforme sécurisée. Nous notifions le vendeur.</li>
+        <li>Une fois vérifié, le vendeur reçoit son argent et le compte est transféré à l’acheteur.</li>
       </ol>
     </div>
   </section>
@@ -64,7 +69,6 @@
   <!-- VENDRE -->
   <section id="sell" class="section hidden">
     <h2>Vendre un compte TikTok</h2>
-
     <input id="username" placeholder="Nom d'utilisateur TikTok">
     <input id="followers" type="number" placeholder="Nombre d'abonnés">
     <input id="price" type="number" placeholder="Prix (FCFA)">
