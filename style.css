@@ -1,44 +1,225 @@
-body {
+/* ===============================
+   RESET + BASE
+================================ */
+* {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #0a2cff;
-  color: white;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', Arial, sans-serif;
 }
 
-.page {
-  padding: 20px;
-}
-
-.hidden {
-  display: none;
-}
-
-input, button {
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  border-radius: 6px;
-  border: none;
-}
-
-button {
-  background: white;
-  color: #0a2cff;
-  font-weight: bold;
-}
-
-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   display: flex;
-  background: #001a99;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff;
 }
 
-nav button {
-  flex: 1;
-  background: none;
+/* ===============================
+   CONTAINER PRINCIPAL
+================================ */
+.container {
+  width: 90%;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+  border-radius: 18px;
+  padding: 25px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+/* ===============================
+   TITRES
+================================ */
+h1, h2, h3 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: 500;
+  opacity: 0.95;
+}
+
+/* ===============================
+   FORMULAIRES
+================================ */
+form {
+  margin-top: 10px;
+}
+
+input {
+  width: 100%;
+  padding: 13px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  font-size: 15px;
+}
+
+input::placeholder {
+  color: #666;
+}
+
+label {
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+/* ===============================
+   BOUTONS
+================================ */
+button {
+  width: 100%;
+  padding: 13px;
+  margin-top: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #00c853;
   color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+button i {
+  margin-right: 6px;
+}
+
+button:hover {
+  background: #00e676;
+  transform: translateY(-1px);
+}
+
+/* Bouton secondaire */
+.btn-secondary {
+  background: #1e88e5;
+}
+
+.btn-secondary:hover {
+  background: #42a5f5;
+}
+
+/* Bouton danger */
+.btn-danger {
+  background: #e53935;
+}
+
+.btn-danger:hover {
+  background: #ef5350;
+}
+
+/* ===============================
+   LIENS
+================================ */
+a {
+  color: #00e676;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ===============================
+   DASHBOARD
+================================ */
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 15px;
+  padding: 18px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+.card i {
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: #00e676;
+}
+
+.card h3 {
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.card p {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* ===============================
+   BARRE DE NAVIGATION
+================================ */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.navbar h2 {
   font-size: 18px;
+}
+
+.logout {
+  font-size: 14px;
+  color: #ff5252;
+  cursor: pointer;
+}
+
+/* ===============================
+   FOOTER
+================================ */
+footer {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+/* ===============================
+   ANIMATIONS
+================================ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 22px;
+  }
+
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
 }
