@@ -1,73 +1,93 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #0a2cff;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f2f6ff;
+}
+
+.hidden { display: none; }
+
+/* AUTH */
+.auth-container {
+  background: #0a2cff;
+  height: 100vh;
   color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 25px;
 }
 
-.page {
-  padding: 20px;
-}
-
-.hidden {
-  display: none;
-}
-
-input, button {
-  width: 100%;
-  padding: 12px;
+.auth-container input, button {
+  padding: 14px;
   margin: 8px 0;
-  border-radius: 6px;
+  border-radius: 8px;
   border: none;
 }
 
 button {
+  background: #0a2cff;
+  color: white;
+  font-weight: bold;
+}
+
+button.outline {
   background: white;
   color: #0a2cff;
-  font-weight: bold;
-  cursor: pointer;
 }
 
-.small-text {
-  font-size: 0.9em;
-  color: #a0c4ff;
-  text-align: center;
-}
-
-#goSignUp {
-  color: #ffffff;
+.small span {
   text-decoration: underline;
   cursor: pointer;
 }
 
+/* PAGES */
+.page {
+  padding: 15px;
+  padding-bottom: 80px;
+}
+
+.card {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-top: 15px;
+}
+
+/* MARQUEE */
 .marquee {
-  overflow: hidden;
+  background: #0a2cff;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  animation: slide 15s linear infinite;
   white-space: nowrap;
+  overflow: hidden;
 }
 
-.marquee p {
-  display: inline-block;
-  padding-left: 100%;
-  animation: marquee 15s linear infinite;
-}
-
-@keyframes marquee {
-  0% { transform: translateX(0%); }
+@keyframes slide {
+  0% { transform: translateX(100%); }
   100% { transform: translateX(-100%); }
 }
 
-nav {
+/* NAV BAR */
+.bottom-nav {
   position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
+  width: 100%;
+  background: white;
   display: flex;
-  background: #001a99;
+  border-top: 1px solid #ddd;
 }
 
-nav button {
+.bottom-nav button {
   flex: 1;
   background: none;
-  color: white;
+  color: #0a2cff;
+  font-size: 12px;
+}
+
+.bottom-nav i {
   font-size: 18px;
+  display: block;
 }
