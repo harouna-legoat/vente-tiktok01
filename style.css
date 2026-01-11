@@ -1,93 +1,87 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #f2f6ff;
+  background: linear-gradient(135deg, #0a1aff, #001f54);
+  color: white;
 }
 
-.hidden { display: none !important; }
+.hidden {
+  display: none;
+}
 
 /* AUTH */
 .auth-container {
-  background: #0a2cff;
-  color: white;
   height: 100vh;
-  padding: 25px;
   display: flex;
-  flex-direction: column;
   justify-content: center;
+  align-items: center;
 }
 
-.auth-container input, button {
-  padding: 14px;
+.auth-box {
+  background: rgba(0,0,0,0.5);
+  padding: 25px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 350px;
+  text-align: center;
+}
+
+.auth-box input {
+  width: 100%;
   margin: 8px 0;
-  border-radius: 8px;
+  padding: 10px;
+  border-radius: 6px;
   border: none;
 }
 
-button {
-  background: #0a2cff;
+.auth-box button {
+  width: 100%;
+  padding: 10px;
+  background: #ff0050;
+  border: none;
+  border-radius: 6px;
   color: white;
-  font-weight: bold;
+  font-size: 16px;
 }
 
-button.outline {
-  background: white;
-  color: #0a2cff;
+.secondary {
+  background: #007bff;
 }
 
-.small span {
-  text-decoration: underline;
+.small-text {
+  font-size: 13px;
+}
+
+.small-text span {
+  color: #00cfff;
   cursor: pointer;
 }
 
-/* PAGES */
-.page {
-  padding: 15px;
-  padding-bottom: 90px;
-}
-
-.card {
-  background: white;
-  padding: 15px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,.1);
-  margin-top: 15px;
-}
-
-/* MARQUEE */
-.marquee {
-  background: #0a2cff;
-  color: white;
-  padding: 10px;
-  border-radius: 8px;
-  white-space: nowrap;
-  overflow: hidden;
-  animation: slide 15s linear infinite;
-}
-
-@keyframes slide {
-  from { transform: translateX(100%); }
-  to { transform: translateX(-100%); }
-}
-
 /* NAV */
-.bottom-nav {
+nav {
   position: fixed;
   bottom: 0;
   width: 100%;
-  background: white;
+  background: #001f54;
   display: flex;
-  border-top: 1px solid #ddd;
+  justify-content: space-around;
+  padding: 10px 0;
 }
 
-.bottom-nav button {
-  flex: 1;
+nav button {
   background: none;
-  color: #0a2cff;
-  font-size: 12px;
+  border: none;
+  color: white;
 }
 
-.bottom-nav i {
-  font-size: 18px;
-  display: block;
+/* SECTIONS */
+.section {
+  padding: 20px;
+  padding-bottom: 80px;
+}
+
+.card {
+  background: rgba(255,255,255,0.1);
+  padding: 15px;
+  border-radius: 10px;
 }
