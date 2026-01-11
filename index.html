@@ -2,19 +2,20 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>TikTok Shell</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+  <title>TikTok Shell</title>
+  
   <!-- Icônes pro -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- 🔐 AUTH PAGE -->
+<!-- PAGE DE CONNEXION / INSCRIPTION -->
 <div id="authPage" class="auth-container">
   <div class="auth-box">
     <h1>TikTok Shell</h1>
-    <p>Achetez & vendez des comptes TikTok en toute sécurité</p>
+    <p>Vendez et achetez des comptes TikTok en toute sécurité</p>
 
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Mot de passe">
@@ -22,7 +23,7 @@
     <button onclick="login()">Connexion</button>
 
     <p class="small-text">
-      Vous n’avez pas encore un compte ?
+      Vous n’avez pas encore de compte ? 
       <span onclick="showRegister()">S’inscrire</span>
     </p>
 
@@ -32,10 +33,10 @@
   </div>
 </div>
 
-<!-- 📱 APPLICATION -->
+<!-- APPLICATION (cachée par défaut) -->
 <div id="appPage" class="hidden">
 
-  <!-- NAV BAR -->
+  <!-- NAVIGATION -->
   <nav>
     <button onclick="showSection('home')"><span class="material-icons">home</span></button>
     <button onclick="showSection('sell')"><span class="material-icons">sell</span></button>
@@ -47,17 +48,15 @@
 
   <!-- ACCUEIL -->
   <section id="home" class="section">
-    <marquee>
-      Bienvenue sur TikTok Shell — Vente et achat de comptes TikTok en toute sécurité.
-      NB : 10% sont prélevés sur chaque vente.
-    </marquee>
-
+    <div class="marquee">
+      Bienvenue sur TikTok Shell — Vente et achat de comptes TikTok sécurisés — Commission 10%
+    </div>
     <div class="card">
       <h2>Comment ça fonctionne ?</h2>
       <ol>
-        <li>Le vendeur dépose les infos du compte.</li>
-        <li>L’acheteur paie via la plateforme.</li>
-        <li>Après vérification, l’argent est envoyé au vendeur.</li>
+        <li>Le vendeur dépose ses informations de compte.</li>
+        <li>L’acheteur paie via la plateforme sécurisée.</li>
+        <li>Après vérification, le vendeur reçoit son argent.</li>
       </ol>
     </div>
   </section>
@@ -69,7 +68,7 @@
     <input id="username" placeholder="Nom d'utilisateur TikTok">
     <input id="followers" type="number" placeholder="Nombre d'abonnés">
     <input id="price" type="number" placeholder="Prix (FCFA)">
-
+    
     <select id="payment">
       <option value="">Moyen de paiement</option>
       <option>Orange Money</option>
@@ -85,19 +84,21 @@
     </select>
 
     <input id="whatsapp" placeholder="Numéro WhatsApp">
-
     <input type="file" id="screenshot">
-
     <button onclick="submitAccount()">Déposer</button>
+
+    <div id="successMessage" class="hidden">
+      <p>✅ Compte déposé avec succès !</p>
+    </div>
   </section>
 
   <!-- ACHETER -->
   <section id="buy" class="section hidden">
     <h2>Comptes disponibles</h2>
-    <div id="accountsList"></div>
+    <div id="accountsList" class="grid"></div>
   </section>
 
-  <!-- TRANSACTIONS -->
+  <!-- MES TRANSACTIONS -->
   <section id="transactions" class="section hidden">
     <h2>Mes transactions</h2>
     <div id="myTransactions"></div>
