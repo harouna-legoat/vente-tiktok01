@@ -1,13 +1,13 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #0a1aff, #001f54);
   color: white;
+  background: url('https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1600&q=80') no-repeat center center fixed;
+  background-size: cover;
 }
 
-.hidden {
-  display: none;
-}
+/* caché */
+.hidden { display: none !important; }
 
 /* AUTH */
 .auth-container {
@@ -18,7 +18,7 @@ body {
 }
 
 .auth-box {
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.6);
   padding: 25px;
   border-radius: 12px;
   width: 90%;
@@ -29,40 +29,32 @@ body {
 .auth-box input {
   width: 100%;
   margin: 8px 0;
-  padding: 10px;
-  border-radius: 6px;
+  padding: 12px;
+  border-radius: 8px;
   border: none;
 }
 
 .auth-box button {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   background: #ff0050;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   color: white;
   font-size: 16px;
+  margin-top: 10px;
 }
 
-.secondary {
-  background: #007bff;
-}
+.secondary { background: #00cfff; }
 
-.small-text {
-  font-size: 13px;
-}
-
-.small-text span {
-  color: #00cfff;
-  cursor: pointer;
-}
+.small-text span { color: #00cfff; cursor: pointer; }
 
 /* NAV */
 nav {
   position: fixed;
   bottom: 0;
   width: 100%;
-  background: #001f54;
+  background: rgba(0,0,0,0.7);
   display: flex;
   justify-content: space-around;
   padding: 10px 0;
@@ -72,6 +64,7 @@ nav button {
   background: none;
   border: none;
   color: white;
+  font-size: 20px;
 }
 
 /* SECTIONS */
@@ -83,5 +76,31 @@ nav button {
 .card {
   background: rgba(255,255,255,0.1);
   padding: 15px;
-  border-radius: 10px;
+  border-radius: 12px;
+  margin-top: 15px;
+}
+
+/* MARQUEE */
+.marquee {
+  background: rgba(0,0,0,0.5);
+  padding: 10px;
+  border-radius: 8px;
+  overflow: hidden;
+  white-space: nowrap;
+  animation: slide 20s linear infinite;
+}
+
+@keyframes slide {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+/* SUCCESS MESSAGE */
+#successMessage {
+  margin-top: 15px;
+  background: rgba(0,255,0,0.3);
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
 }
