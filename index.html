@@ -5,39 +5,45 @@
   <title>TikTok Shell</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- FONT AWESOME (ICÔNES PRO) -->
+  <!-- Icônes PRO -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- AUTH -->
+<!-- ===== AUTH (VISIBLE AU DÉPART) ===== -->
 <div id="authPage" class="auth-container">
   <h1>TikTok Shell</h1>
+
   <input id="email" type="email" placeholder="Email">
   <input id="password" type="password" placeholder="Mot de passe">
+
   <button onclick="login()">Connexion</button>
   <button class="outline" onclick="register()">S’inscrire</button>
-  <p class="small">Pas de compte ? <span onclick="register()">Créer un compte</span></p>
+
+  <p class="small">
+    Vous n’avez pas encore un compte ?
+    <span onclick="register()">S’inscrire</span>
+  </p>
 </div>
 
-<!-- APP -->
+<!-- ===== APPLICATION (CACHÉE AU DÉPART) ===== -->
 <div id="appPage" class="hidden">
 
   <!-- ACCUEIL -->
   <section id="home" class="page">
     <div class="marquee">
-      Bienvenue sur TikTok Shell — Vente et achat de comptes TikTok sécurisés — Commission 10%
+      Bienvenue sur TikTok Shell — Vente & achat de comptes TikTok sécurisés — Commission 10%
     </div>
 
     <div class="card">
-      <h3>Comment ça marche ?</h3>
+      <h3>Comment fonctionne la plateforme ?</h3>
       <ol>
-        <li>Vous déposez les informations du compte</li>
-        <li>L’acheteur paie sur la plateforme</li>
-        <li>Nous faisons l’échange sécurisé</li>
-        <li>Vous recevez votre argent</li>
+        <li>Le vendeur dépose les infos du compte (username, abonnés, photo, WhatsApp).</li>
+        <li>L’acheteur paie chez nous.</li>
+        <li>Nous faisons l’échange sécurisé.</li>
+        <li>Le vendeur reçoit son argent, sinon remboursement.</li>
       </ol>
     </div>
   </section>
@@ -55,29 +61,42 @@
       <input id="username" placeholder="Username TikTok">
       <input id="followers" type="number" placeholder="Nombre d’abonnés">
       <input id="price" type="number" placeholder="Prix (FCFA)">
+
       <select id="paymentMethod">
         <option value="">Moyen de paiement</option>
         <option>Orange Money</option>
         <option>Wave</option>
       </select>
+
       <input id="whatsapp" placeholder="WhatsApp (+226 / +33)">
       <input id="screenshot" type="file">
+
       <button onclick="sellAccount()">Déposer</button>
     </div>
   </section>
 
-  <!-- TRANSACTIONS -->
+  <!-- MES TRANSACTIONS -->
   <section id="transactions" class="page hidden">
     <h2>Mes transactions</h2>
     <div id="myTransactions"></div>
   </section>
 
-  <!-- COMPTE -->
+  <!-- MON COMPTE -->
   <section id="account" class="page hidden">
     <div class="card">
       <p>Email : <span id="userEmail"></span></p>
-      <p>Solde : 0 FCFA</p>
+      <p>Portefeuille : 0 FCFA</p>
       <button onclick="logout()">Déconnexion</button>
+    </div>
+  </section>
+
+  <!-- SERVICE CLIENT -->
+  <section id="support" class="page hidden">
+    <div class="card">
+      <h3>Service client</h3>
+      <a href="https://wa.me/22605765650" target="_blank">
+        Contacter sur WhatsApp
+      </a>
     </div>
   </section>
 
