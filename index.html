@@ -4,110 +4,104 @@
   <meta charset="UTF-8">
   <title>TikTok Shell</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Icônes PRO -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
   <link rel="stylesheet" href="style.css">
+  <!-- Icônes pro -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
 
-<!-- ===== AUTH (VISIBLE AU DÉPART) ===== -->
+<!-- 🔐 AUTH PAGE -->
 <div id="authPage" class="auth-container">
-  <h1>TikTok Shell</h1>
+  <div class="auth-box">
+    <h1>TikTok Shell</h1>
+    <p>Achetez & vendez des comptes TikTok en toute sécurité</p>
 
-  <input id="email" type="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Mot de passe">
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Mot de passe">
 
-  <button onclick="login()">Connexion</button>
-  <button class="outline" onclick="register()">S’inscrire</button>
+    <button onclick="login()">Connexion</button>
 
-  <p class="small">
-    Vous n’avez pas encore un compte ?
-    <span onclick="register()">S’inscrire</span>
-  </p>
+    <p class="small-text">
+      Vous n’avez pas encore un compte ?
+      <span onclick="showRegister()">S’inscrire</span>
+    </p>
+
+    <div id="registerBox" class="hidden">
+      <button class="secondary" onclick="register()">Créer un compte</button>
+    </div>
+  </div>
 </div>
 
-<!-- ===== APPLICATION (CACHÉE AU DÉPART) ===== -->
+<!-- 📱 APPLICATION -->
 <div id="appPage" class="hidden">
 
+  <!-- NAV BAR -->
+  <nav>
+    <button onclick="showSection('home')"><span class="material-icons">home</span></button>
+    <button onclick="showSection('sell')"><span class="material-icons">sell</span></button>
+    <button onclick="showSection('buy')"><span class="material-icons">shopping_cart</span></button>
+    <button onclick="showSection('transactions')"><span class="material-icons">receipt_long</span></button>
+    <button onclick="openSupport()"><span class="material-icons">support_agent</span></button>
+    <button onclick="logout()"><span class="material-icons">logout</span></button>
+  </nav>
+
   <!-- ACCUEIL -->
-  <section id="home" class="page">
-    <div class="marquee">
-      Bienvenue sur TikTok Shell — Vente & achat de comptes TikTok sécurisés — Commission 10%
-    </div>
+  <section id="home" class="section">
+    <marquee>
+      Bienvenue sur TikTok Shell — Vente et achat de comptes TikTok en toute sécurité.
+      NB : 10% sont prélevés sur chaque vente.
+    </marquee>
 
     <div class="card">
-      <h3>Comment fonctionne la plateforme ?</h3>
+      <h2>Comment ça fonctionne ?</h2>
       <ol>
-        <li>Le vendeur dépose les infos du compte (username, abonnés, photo, WhatsApp).</li>
-        <li>L’acheteur paie chez nous.</li>
-        <li>Nous faisons l’échange sécurisé.</li>
-        <li>Le vendeur reçoit son argent, sinon remboursement.</li>
+        <li>Le vendeur dépose les infos du compte.</li>
+        <li>L’acheteur paie via la plateforme.</li>
+        <li>Après vérification, l’argent est envoyé au vendeur.</li>
       </ol>
     </div>
   </section>
 
-  <!-- ACHETER -->
-  <section id="buy" class="page hidden">
-    <h2>Acheter un compte</h2>
-    <div id="accountsList" class="grid"></div>
-  </section>
-
   <!-- VENDRE -->
-  <section id="sell" class="page hidden">
-    <h2>Vendre un compte</h2>
-    <div class="card">
-      <input id="username" placeholder="Username TikTok">
-      <input id="followers" type="number" placeholder="Nombre d’abonnés">
-      <input id="price" type="number" placeholder="Prix (FCFA)">
+  <section id="sell" class="section hidden">
+    <h2>Vendre un compte TikTok</h2>
 
-      <select id="paymentMethod">
-        <option value="">Moyen de paiement</option>
-        <option>Orange Money</option>
-        <option>Wave</option>
-      </select>
+    <input id="username" placeholder="Nom d'utilisateur TikTok">
+    <input id="followers" type="number" placeholder="Nombre d'abonnés">
+    <input id="price" type="number" placeholder="Prix (FCFA)">
 
-      <input id="whatsapp" placeholder="WhatsApp (+226 / +33)">
-      <input id="screenshot" type="file">
+    <select id="payment">
+      <option value="">Moyen de paiement</option>
+      <option>Orange Money</option>
+      <option>Wave</option>
+    </select>
 
-      <button onclick="sellAccount()">Déposer</button>
-    </div>
+    <select id="country">
+      <option value="">Indicatif WhatsApp</option>
+      <option>+226 Burkina Faso</option>
+      <option>+225 Côte d'Ivoire</option>
+      <option>+221 Sénégal</option>
+      <option>+33 France</option>
+    </select>
+
+    <input id="whatsapp" placeholder="Numéro WhatsApp">
+
+    <input type="file" id="screenshot">
+
+    <button onclick="submitAccount()">Déposer</button>
   </section>
 
-  <!-- MES TRANSACTIONS -->
-  <section id="transactions" class="page hidden">
+  <!-- ACHETER -->
+  <section id="buy" class="section hidden">
+    <h2>Comptes disponibles</h2>
+    <div id="accountsList"></div>
+  </section>
+
+  <!-- TRANSACTIONS -->
+  <section id="transactions" class="section hidden">
     <h2>Mes transactions</h2>
     <div id="myTransactions"></div>
   </section>
-
-  <!-- MON COMPTE -->
-  <section id="account" class="page hidden">
-    <div class="card">
-      <p>Email : <span id="userEmail"></span></p>
-      <p>Portefeuille : 0 FCFA</p>
-      <button onclick="logout()">Déconnexion</button>
-    </div>
-  </section>
-
-  <!-- SERVICE CLIENT -->
-  <section id="support" class="page hidden">
-    <div class="card">
-      <h3>Service client</h3>
-      <a href="https://wa.me/22605765650" target="_blank">
-        Contacter sur WhatsApp
-      </a>
-    </div>
-  </section>
-
-  <!-- NAVIGATION PRO -->
-  <nav class="bottom-nav">
-    <button onclick="show('home')"><i class="fa-solid fa-house"></i><span>Accueil</span></button>
-    <button onclick="show('buy')"><i class="fa-solid fa-cart-shopping"></i><span>Acheter</span></button>
-    <button onclick="show('sell')"><i class="fa-solid fa-plus"></i><span>Vendre</span></button>
-    <button onclick="show('transactions')"><i class="fa-solid fa-clock-rotate-left"></i><span>Transactions</span></button>
-    <button onclick="show('account')"><i class="fa-solid fa-user"></i><span>Compte</span></button>
-  </nav>
 
 </div>
 
