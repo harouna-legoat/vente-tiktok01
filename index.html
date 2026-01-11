@@ -2,101 +2,95 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Vente Comptes TikTok Sécurisés</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TikTok Shell</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
-<!-- NAVBAR -->
-<div class="navbar">
-  <div class="logo">
-    <i class="fa-solid fa-house"></i>
-    Vente Comptes TikTok Sécurisés
-  </div>
-  <ul>
-    <li>Accueil</li>
-    <li id="btnVendre">Vendre</li>
-    <li id="btnAcheter">Acheter</li>
-    <li id="btnTransactions">Mes transactions</li>
-    <li id="btnSupport">Support</li>
-  </ul>
+<!-- PAGE AUTH -->
+<div id="authPage" class="page">
+  <h1>TikTok Shell</h1>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Mot de passe">
+  <button onclick="register()">S'inscrire</button>
+  <button onclick="login()">Connexion</button>
+  <p class="small-text">Vous n'avez pas encore un compte ? <span id="goSignUp">S'inscrire</span></p>
 </div>
 
-<div class="container">
+<!-- PAGE PRINCIPALE -->
+<div id="appPage" class="page hidden">
 
-  <!-- ETAPES 1 2 3 -->
-  <div class="steps">
-    <div class="step">1. Ajoutez votre compte TikTok à vendre</div>
-    <div class="step">2. Fixez votre prix (Orange Money / Wave)</div>
-    <div class="step">3. Nous sécurisons la transaction</div>
-  </div>
-
-  <!-- ZONE PRINCIPALE -->
-  <div class="main-grid">
-
-    <!-- DEPOSER -->
-    <div class="card">
-      <h3>Déposer un Compte à Vendre</h3>
-
-      <input type="text" id="nomCompte" placeholder="Nom du compte TikTok">
-      <input type="number" id="prixCompte" placeholder="Prix de vente (FCFA)">
-
-      <select id="paiement">
-        <option>Orange Money</option>
-        <option>Wave</option>
-      </select>
-
-      <input type="file" id="capture">
-
-      <p class="info-text">
-        ⚠️ Nous prenons <strong>10 %</strong> de frais sur chaque vente.
-      </p>
-
-      <button class="submit" onclick="deposerCompte()">Déposer l'annonce</button>
+  <!-- ACCUEIL -->
+  <section id="home">
+    <div class="marquee">
+      <p>Bienvenue sur TikTok Shell, ici nous vous aidons à vendre ou acheter votre compte TikTok de manière sécurisée. NB: sur le prix de vente nous prenons 10% de commission.</p>
     </div>
-
-    <!-- PAIEMENT + SERVICE CLIENT -->
-    <div class="card">
-      <h3>Paiement Sécurisé</h3>
-      <p>✔ Recevez l’argent via Orange Money ou Wave</p>
-      <p>✔ Validation sécurisée par l’administrateur</p>
-
-      <h3 style="margin-top:15px;">Espace Client & Vendeur</h3>
-      <button class="submit whatsapp" onclick="contacterService()">
-        Contacter le Service Client
-      </button>
+    <div class="explication">
+      <h3>Comment ça fonctionne ?</h3>
+      <ol>
+        <li>Déposez vos informations : username, abonnés, capture d'écran, WhatsApp et prix.</li>
+        <li>L'acheteur dépose son argent chez nous, vous êtes notifié(e).</li>
+        <li>Nous vous demandons vos coordonnées pour finaliser la transaction et vous envoyer l'argent. Sinon le paiement retourne à l'acheteur.</li>
+        <li>Tout est sécurisé, vous recevez votre argent et l'acheteur son compte.</li>
+      </ol>
     </div>
-  </div>
+  </section>
 
-  <!-- STATUT -->
-  <div class="status-grid">
-    <div class="card">
-      <h3>Un Acheteur Intéressé</h3>
-      <p>Acheteur vérifié – En attente de paiement</p>
-    </div>
+  <!-- ACHETER -->
+  <section id="buy" class="hidden">
+    <h2>Acheter un compte</h2>
+    <div id="accountsList"></div>
+  </section>
 
-    <div class="card green">
-      <h3>Fonds Reçus</h3>
-      <p>Paiement reçu de l’acheteur</p>
-      <button class="submit">Transmettre les identifiants</button>
-    </div>
-  </div>
+  <!-- VENDRE -->
+  <section id="sell" class="hidden">
+    <h2>Vendre un compte</h2>
+    <input id="username" placeholder="Username TikTok">
+    <input id="followers" type="number" placeholder="Nombre d'abonnés">
+    <input id="price" type="number" placeholder="Prix (FCFA)">
+    <input id="paymentMethod" list="payments" placeholder="Moyen de paiement">
+    <datalist id="payments">
+      <option value="Orange Money">
+      <option value="Wave">
+    </datalist>
+    <input id="whatsapp" placeholder="WhatsApp (+226 ou +33)">
+    <input type="file" id="screenshot">
+    <button onclick="sellAccount()">Déposer</button>
+  </section>
 
-  <!-- TRANSACTION SECURISEE -->
-  <div class="flow">
-    <h3>Transaction Sécurisée</h3>
-    <p>L’acheteur paie → Le vendeur envoie → Nous sécurisons</p>
-  </div>
+  <!-- MES TRANSACTIONS -->
+  <section id="transactions" class="hidden">
+    <h2>Mes transactions</h2>
+    <div id="myTransactions"></div>
+  </section>
 
+  <!-- MON COMPTE -->
+  <section id="account" class="hidden">
+    <h2>Mon compte</h2>
+    <p>Email : <span id="userEmail"></span></p>
+    <p>💼 Portefeuille : <span id="wallet">0</span> FCFA</p>
+    <button onclick="logout()">Déconnexion</button>
+  </section>
+
+  <!-- SERVICE CLIENT -->
+  <section id="support" class="hidden">
+    <h2>Service client</h2>
+    <p>Pour toute aide, contactez-nous via WhatsApp :</p>
+    <a href="https://wa.me/22605765650" target="_blank">WhatsApp +226 05 76 56 50</a>
+  </section>
+
+  <!-- NAVIGATION -->
+  <nav>
+    <button onclick="show('home')">🏠</button>
+    <button onclick="show('buy')">🛒</button>
+    <button onclick="show('sell')">➕</button>
+    <button onclick="show('transactions')">📊</button>
+    <button onclick="show('account')">👤</button>
+    <button onclick="show('support')">📞</button>
+  </nav>
 </div>
 
-<footer>
-  FAQ | Conditions | Assistance 24/7 <br>
-  © Vente sécurisée de comptes TikTok
-</footer>
-
-<script src="script.js"></script>
+<script type="module" src="script.js"></script>
 </body>
 </html>
