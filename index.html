@@ -1,86 +1,41 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TikTok Shell</title>
-
-  <!-- RESPONSIVE OBLIGATOIRE -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- MATERIAL ICONS (corrige les textes trending_up etc.) -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<div class="app">
+<!-- ================= AUTH ================= -->
+<div id="auth-screen" class="center">
+  <div class="card">
+    <h2>TikTok Shell</h2>
 
-  <!-- NAVBAR -->
-  <header class="navbar">
-    <div class="logo">
-      <img src="./assets/tiktok.svg" alt="TikTok">
-      <span>TikTok Shell</span>
-    </div>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Mot de passe">
 
-    <nav class="nav-links">
-      <a>Acheter un Compte</a>
-      <a>Vendre un Compte</a>
-      <a>Mon Compte</a>
-      <button class="logout">Se Déconnecter</button>
-    </nav>
-  </header>
-
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-text">
-      <h1>BIENVENUE CHEZ<br><span>TIKTOK SHELL</span></h1>
-      <p>
-        Nous vous aidons à acheter et vendre votre compte TikTok
-        de manière sécurisée.
-      </p>
-    </div>
-
-    <div class="hero-image">
-      <img src="./assets/shield.png" alt="Sécurité">
-    </div>
-  </section>
-
-  <!-- ACTIONS -->
-  <section class="actions">
-
-    <div class="action-card">
-      <span class="material-icons">search</span>
-      <h3>ACHETER UN COMPTE</h3>
-      <button>Parcourir les Comptes</button>
-    </div>
-
-    <div class="action-card">
-      <span class="material-icons">trending_up</span>
-      <h3>VENDRE UN COMPTE</h3>
-      <button>Mettre en Vente</button>
-    </div>
-
-    <div class="action-card">
-      <span class="material-icons">person</span>
-      <h3>MON COMPTE</h3>
-      <button>Gérer mon Profil</button>
-    </div>
-
-  </section>
-
-  <!-- TRANSACTIONS -->
-  <section class="payments">
-    <h4>Transactions Sécurisées</h4>
-    <div class="payment-logos">
-      <img src="./assets/orange-money.png" alt="Orange Money">
-      <img src="./assets/wave.png" alt="Wave">
-    </div>
-  </section>
-
+    <button onclick="login()">Connexion</button>
+    <button class="secondary" onclick="register()">Inscription</button>
+  </div>
 </div>
 
+<!-- ================= APP ================= -->
+<div id="app-screen">
+  <header>
+    <h1>TikTok Shell</h1>
+    <button onclick="logout()">Déconnexion</button>
+  </header>
+
+  <main class="grid">
+    <div class="box">Acheter un compte</div>
+    <div class="box">Vendre un compte</div>
+    <div class="box">Mes achats</div>
+    <div class="box">Mon profil</div>
+  </main>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
