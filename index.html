@@ -1,41 +1,47 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TikTok Market - Sécurisé</title>
-    <link rel="stylesheet" href="style.css">
-    
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <meta charset="UTF-8">
+  <title>TikTok Safe Market</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Firebase SDK -->
+  <script type="module" src="script.js"></script>
 </head>
 <body>
 
-    <header>
-        <div class="logo">TikTok Market 🛡️</div>
-        <p>L'intermédiaire de confiance pour vos transactions</p>
-    </header>
+<header>
+  <h1>Achetez & vendez des comptes TikTok sans risque</h1>
+  <p class="subtitle">Paiement sécurisé • Vérification vendeur • Séquestre</p>
+  <button id="sellBtn">Vendre un compte</button>
+</header>
 
-    <div class="container">
-        <section class="card-form">
-            <h2>Mettre en vente un compte</h2>
-            <div class="form-inputs">
-                <input type="text" id="username" placeholder="@NomUtilisateur">
-                <input type="number" id="followers" placeholder="Nombre d'abonnés">
-                <input type="number" id="price" placeholder="Prix (€)">
-                <button id="submitBtn">Publier l'annonce</button>
-            </div>
-        </section>
+<main id="listings"></main>
 
-        <hr>
+<!-- AUTH MODAL -->
+<div id="authModal" class="modal hidden">
+  <div class="modal-box">
+    <h2>Connexion requise</h2>
+    <p class="micro">Crée un compte pour acheter ou vendre en toute sécurité</p>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Mot de passe">
+    <button id="authBtn">Connexion / Inscription</button>
+  </div>
+</div>
 
-        <section>
-            <h2>Comptes vérifiés disponibles</h2>
-            <div id="accountList" class="account-grid">
-                </div>
-        </section>
-    </div>
+<!-- SELL MODAL -->
+<div id="sellModal" class="modal hidden">
+  <div class="modal-box">
+    <h2>Vendre un compte TikTok</h2>
+    <input id="username" placeholder="@username">
+    <input id="followers" placeholder="Nombre d'abonnés">
+    <input id="price" placeholder="Prix ($)">
+    <input id="niche" placeholder="Niche du compte">
+    <p class="code">Code à mettre dans la bio : <span id="verifyCode"></span></p>
+    <button id="verifyBtn">J'ai ajouté le code</button>
+    <p class="micro">Nous vérifions que le compte t’appartient réellement</p>
+  </div>
+</div>
 
-    <script src="script.js"></script>
 </body>
 </html>
