@@ -1,41 +1,41 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TikTok Shell</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Market - Sécurisé</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 </head>
 <body>
 
-<!-- ================= AUTH ================= -->
-<div id="auth-screen" class="center">
-  <div class="card">
-    <h2>TikTok Shell</h2>
+    <header>
+        <div class="logo">TikTok Market 🛡️</div>
+        <p>L'intermédiaire de confiance pour vos transactions</p>
+    </header>
 
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Mot de passe">
+    <div class="container">
+        <section class="card-form">
+            <h2>Mettre en vente un compte</h2>
+            <div class="form-inputs">
+                <input type="text" id="username" placeholder="@NomUtilisateur">
+                <input type="number" id="followers" placeholder="Nombre d'abonnés">
+                <input type="number" id="price" placeholder="Prix (€)">
+                <button id="submitBtn">Publier l'annonce</button>
+            </div>
+        </section>
 
-    <button onclick="login()">Connexion</button>
-    <button class="secondary" onclick="register()">Inscription</button>
-  </div>
-</div>
+        <hr>
 
-<!-- ================= APP ================= -->
-<div id="app-screen">
-  <header>
-    <h1>TikTok Shell</h1>
-    <button onclick="logout()">Déconnexion</button>
-  </header>
+        <section>
+            <h2>Comptes vérifiés disponibles</h2>
+            <div id="accountList" class="account-grid">
+                </div>
+        </section>
+    </div>
 
-  <main class="grid">
-    <div class="box">Acheter un compte</div>
-    <div class="box">Vendre un compte</div>
-    <div class="box">Mes achats</div>
-    <div class="box">Mon profil</div>
-  </main>
-</div>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
