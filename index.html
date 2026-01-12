@@ -1,18 +1,35 @@
-<!-- PAGE PRINCIPALE -->
-<div id="appPage" class="app hidden">
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>TikTok Shell</title>
+
+  <!-- RESPONSIVE OBLIGATOIRE -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- MATERIAL ICONS (corrige les textes trending_up etc.) -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+
+<div class="app">
 
   <!-- NAVBAR -->
   <header class="navbar">
     <div class="logo">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/TikTok_logo.svg">
+      <img src="./assets/tiktok.svg" alt="TikTok">
       <span>TikTok Shell</span>
     </div>
 
     <nav class="nav-links">
-      <a onclick="showSection('buy')">Acheter un Compte</a>
-      <a onclick="showSection('sell')">Vendre un Compte</a>
-      <a onclick="showSection('account')">Mon Compte</a>
-      <button class="logout" onclick="logout()">Se Déconnecter</button>
+      <a>Acheter un Compte</a>
+      <a>Vendre un Compte</a>
+      <a>Mon Compte</a>
+      <button class="logout">Se Déconnecter</button>
     </nav>
   </header>
 
@@ -26,8 +43,8 @@
       </p>
     </div>
 
-    <div class="hero-shield">
-      <img src="https://i.imgur.com/5ZQZ5wT.png" alt="sécurité">
+    <div class="hero-image">
+      <img src="./assets/shield.png" alt="Sécurité">
     </div>
   </section>
 
@@ -37,30 +54,33 @@
     <div class="action-card">
       <span class="material-icons">search</span>
       <h3>ACHETER UN COMPTE</h3>
-      <button onclick="showSection('buy')">Parcourir les Comptes</button>
+      <button>Parcourir les Comptes</button>
     </div>
 
     <div class="action-card">
       <span class="material-icons">trending_up</span>
       <h3>VENDRE UN COMPTE</h3>
-      <button onclick="showSection('sell')">Mettre en Vente</button>
+      <button>Mettre en Vente</button>
     </div>
 
     <div class="action-card">
       <span class="material-icons">person</span>
       <h3>MON COMPTE</h3>
-      <button onclick="showSection('account')">Gérer mon Profil</button>
+      <button>Gérer mon Profil</button>
     </div>
 
   </section>
 
-  <!-- TRANSACTIONS SECURISEES -->
+  <!-- TRANSACTIONS -->
   <section class="payments">
     <h4>Transactions Sécurisées</h4>
     <div class="payment-logos">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Orange_Money_logo.svg">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/Wave_logo.svg">
+      <img src="./assets/orange-money.png" alt="Orange Money">
+      <img src="./assets/wave.png" alt="Wave">
     </div>
   </section>
 
 </div>
+
+</body>
+</html>
