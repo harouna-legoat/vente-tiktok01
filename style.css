@@ -1,126 +1,77 @@
-/* RESET */
 * {
   box-sizing: border-box;
 }
 
-html, body {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-}
-
-/* BACKGROUND GALACTIQUE */
 body {
+  margin: 0;
   font-family: Arial, sans-serif;
-  background: radial-gradient(circle at top, #1b2350, #070b1f);
-  color: white;
+  background: #f5f6fa;
 }
 
-/* CONTAINER */
-.app {
-  max-width: 1200px;
-  margin: 40px auto;
-  background: linear-gradient(180deg, #0d1436, #05081a);
-  border-radius: 20px;
-  padding-bottom: 40px;
-  box-shadow: 0 0 60px rgba(0,0,0,0.6);
-}
-
-/* NAVBAR */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 30px;
-}
-
-.logo {
+/* AUTH */
+.center {
+  min-height: 100vh;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
 }
 
-.logo img {
-  width: 32px;
-}
-
-.nav-links a {
-  margin-right: 20px;
-  cursor: pointer;
-  opacity: 0.8;
-}
-
-.logout {
-  background: transparent;
-  border: 1px solid #6b7cff;
-  color: #6b7cff;
-  padding: 8px 16px;
-  border-radius: 20px;
-}
-
-/* HERO */
-.hero {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 40px 50px;
-  flex-wrap: wrap;
-}
-
-.hero-text {
-  max-width: 500px;
-}
-
-.hero-text h1 {
-  font-size: 36px;
-}
-
-.hero-text span {
-  color: #7aa2ff;
-}
-
-.hero-image img {
-  width: 220px;
-}
-
-/* ACTIONS */
-.actions {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 25px;
-  padding: 30px 50px;
-}
-
-.action-card {
-  background: rgba(255,255,255,0.04);
-  border-radius: 20px;
-  padding: 30px;
+.card {
+  width: 90%;
+  max-width: 350px;
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
   text-align: center;
-  border: 1px solid rgba(255,255,255,0.1);
 }
 
-.action-card span {
-  font-size: 42px;
-  color: #7aa2ff;
+.card input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
 }
 
-.action-card button {
-  margin-top: 15px;
-  padding: 12px 22px;
-  border-radius: 25px;
+.card button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
   border: none;
-  background: linear-gradient(90deg,#6b7cff,#8fa8ff);
+  background: #111;
   color: white;
-  font-size: 14px;
+  border-radius: 5px;
 }
 
-/* PAYMENTS */
-.payments {
+.card .secondary {
+  background: #ddd;
+  color: black;
+}
+
+/* APP */
+#app-screen {
+  display: none;
+}
+
+header {
+  padding: 15px;
+  background: #111;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.grid {
+  padding: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+.box {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
   text-align: center;
-  margin-top: 20px;
-}
-
-.payment-logos img {
-  height: 35px;
-  margin: 10px 15px;
+  font-weight: bold;
 }
