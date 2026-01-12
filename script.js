@@ -1,68 +1,102 @@
-// Ta configuration Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/* 🔥 TON FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyA2wEZMelhCwNYKs7vtgEFhcXkPxXeTx1U",
   authDomain: "shell-toktok.firebaseapp.com",
   projectId: "shell-toktok",
   storageBucket: "shell-toktok.firebasestorage.app",
   messagingSenderId: "559812497776",
-  appId: "1:559812497776:web:b2256f21be94c712fd7fb5"
+  appId: "1:559812497776:web:b2256f21be94c712fd7fb5",
+  measurementId: "G-QPXENJ247J"
 };
 
-// Initialisation
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-// Éléments HTML
-const submitBtn = document.getElementById('submitBtn');
-const accountList = document.getElementById('accountList');
+/* 👤 USER STATE */
+let currentUser = null;
 
-// 1. FONCTION : Publier un compte
-submitBtn.addEventListener('click', () => {
-    const user = document.getElementById('username').value;
-    const subs = document.getElementById('followers').value;
-    const price = document.getElementById('price').value;
+/* ELEMENTS */
+const authModal = document.getElementById("authModal");
+const sellModal = document.getElementById("sellModal");
+const listingsDiv = document.getElementById("listings");
 
-    if(user && subs && price) {
-        const newAccountRef = database.ref('comptes').push();
-        newAccountRef.set({
-            username: user,
-            followers: subs,
-            price: price,
-            timestamp: Date.now()
-        }).then(() => {
-            alert("Annonce publiée ! En attente de vérification.");
-            // Réinitialiser les champs
-            document.getElementById('username').value = "";
-            document.getElementById('followers').value = "";
-            document.getElementById('price').value = "";
-        });
-    } else {
-        alert("Veuillez remplir tous les champs.");
-    }
+/* 🔐 AUTH GUARD */
+onAuthStateChanged(auth, user => {
+  currentUser = user;
 });
 
-// 2. FONCTION : Afficher les comptes en temps réel
-database.ref('comptes').on('value', (snapshot) => {
-    accountList.innerHTML = ""; // On vide la liste avant de la rafraîchir
-    
-    snapshot.forEach((childSnapshot) => {
-        const data = childSnapshot.val();
-        
-        const card = document.createElement('div');
-        card.className = "account-card";
-        card.innerHTML = `
-            <h3>${data.username}</h3>
-            <div class="info">👥 <b>${data.followers}</b> abonnés</div>
-            <span class="price-tag">${data.price} €</span>
-            <button class="buy-btn" onclick="contactAdmin('${data.username}')">Acheter via Intermédiaire</button>
-        `;
-        accountList.appendChild(card);
-    });
-});
+/* 🔑 LOGIN / REGISTER */
+document.getElementById("authBtn").onclick = async () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-// 3. FONCTION : Contact (à personnaliser)
-function contactAdmin(accountName) {
-    alert("Vous allez être mis en relation avec l'intermédiaire pour le compte : " + accountName);
-    // Ici tu pourrais rediriger vers ton WhatsApp ou un chat
-    // window.location.href = "https://wa.me/TON_NUMERO?text=Je veux acheter le compte " + accountName;
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch {
+    await createUserWithEmailAndPassword(auth, email, password);
+  }
+  authModal.classList.add("hidden");
+};
+
+/* 📦 LOAD LISTINGS */
+async function loadListings() {
+  listingsDiv.innerHTML = "";
+  const snap = await getDocs(collection(db, "listings"));
+
+  snap.forEach(d => {
+    const data = d.data();
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <p><strong>${data.username}</strong></p>
+      <p>${data.followers} abonnés</p>
+      <p class="price">${data.price}$</p>
+      <button onclick="buyListing('${d.id}')">Acheter</button>
+      <p class="micro">Votre argent est conservé par notre système sécurisé</p>
+    `;
+    listingsDiv.appendChild(card);
+  });
 }
+loadListings();
+
+/* 🛒 BUY (ESCROW MOCK) */
+window.buyListing = async (id) => {
+  if (!currentUser) return authModal.classList.remove("hidden");
+
+  await updateDoc(doc(db, "listings", id), {
+    status: "pending",
+    buyer: currentUser.uid
+  });
+
+  alert("Paiement sécurisé initié. Fonds bloqués (escrow).");
+};
+
+/* 🧾 SELL */
+document.getElementById("sellBtn").onclick = () => {
+  if (!currentUser) return authModal.classList.remove("hidden");
+
+  const code = "SAFE-" + Math.floor(Math.random() * 9000);
+  document.getElementById("verifyCode").textContent = code;
+  sellModal.classList.remove("hidden");
+};
+
+/* 🔍 VERIFY (MOCK TIKTOK BIO) */
+document.getElementById("verifyBtn").onclick = async () => {
+  await addDoc(collection(db, "listings"), {
+    username: username.value,
+    followers: followers.value,
+    price: price.value,
+    niche: niche.value,
+    status: "verified",
+    seller: currentUser.uid,
+    createdAt: Date.now()
+  });
+
+  sellModal.classList.add("hidden");
+  loadListings();
+};
