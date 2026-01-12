@@ -1,77 +1,84 @@
-* {
-  box-sizing: border-box;
+:root {
+    --primary: #fe2c55;
+    --dark: #121212;
+    --light: #ffffff;
+    --gray: #f8f8f8;
 }
 
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f5f6fa;
-}
-
-/* AUTH */
-.center {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.card {
-  width: 90%;
-  max-width: 350px;
-  background: white;
-  padding: 25px;
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  text-align: center;
-}
-
-.card input {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-}
-
-.card button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  border: none;
-  background: #111;
-  color: white;
-  border-radius: 5px;
-}
-
-.card .secondary {
-  background: #ddd;
-  color: black;
-}
-
-/* APP */
-#app-screen {
-  display: none;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--gray);
+    margin: 0;
+    color: var(--dark);
 }
 
 header {
-  padding: 15px;
-  background: #111;
-  color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    background: var(--dark);
+    color: white;
+    padding: 2rem;
+    text-align: center;
 }
 
-.grid {
-  padding: 15px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 15px;
+.container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 0 15px;
 }
 
-.box {
-  background: white;
-  padding: 30px;
-  border-radius: 10px;
-  text-align: center;
-  font-weight: bold;
+.card-form {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+}
+
+.form-inputs {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+input {
+    flex: 1;
+    min-width: 200px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover { opacity: 0.9; transform: scale(1.02); }
+
+.account-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.account-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    border-top: 4px solid var(--primary);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.account-card h3 { margin: 0 0 10px 0; color: var(--primary); }
+.info { font-size: 0.9rem; margin-bottom: 15px; }
+.price-tag { font-size: 1.4rem; font-weight: bold; margin-bottom: 15px; display: block; }
+
+.buy-btn {
+    width: 100%;
+    background: #000;
 }
