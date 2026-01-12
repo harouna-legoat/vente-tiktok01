@@ -1,115 +1,66 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>TikTok Shell</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- PAGE PRINCIPALE -->
+<div id="appPage" class="app hidden">
 
-  <!-- Icônes -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-<!-- PAGE AUTH -->
-<div id="authPage" class="auth-container">
-  <div class="auth-box">
-    <h1>TikTok Shell</h1>
-    <p>Vendez et achetez des comptes TikTok en toute sécurité</p>
-
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Mot de passe">
-
-    <button onclick="login()">Connexion</button>
-
-    <p class="small-text">
-      Vous n’avez pas encore de compte ? 
-      <span onclick="showRegister()">S’inscrire</span>
-    </p>
-
-    <div id="registerBox" class="hidden">
-      <button class="secondary" onclick="register()">Créer un compte</button>
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="logo">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/TikTok_logo.svg">
+      <span>TikTok Shell</span>
     </div>
-  </div>
-</div>
 
-<!-- APP PRINCIPALE -->
-<div id="appPage" class="hidden">
+    <nav class="nav-links">
+      <a onclick="showSection('buy')">Acheter un Compte</a>
+      <a onclick="showSection('sell')">Vendre un Compte</a>
+      <a onclick="showSection('account')">Mon Compte</a>
+      <button class="logout" onclick="logout()">Se Déconnecter</button>
+    </nav>
+  </header>
 
-  <!-- NAVIGATION -->
-  <nav>
-    <button onclick="showSection('home')"><span class="material-icons">home</span></button>
-    <button onclick="showSection('sell')"><span class="material-icons">sell</span></button>
-    <button onclick="showSection('buy')"><span class="material-icons">shopping_cart</span></button>
-    <button onclick="showSection('transactions')"><span class="material-icons">receipt_long</span></button>
-    <button onclick="openSupport()"><span class="material-icons">support_agent</span></button>
-    <button onclick="logout()"><span class="material-icons">logout</span></button>
-  </nav>
-
-  <!-- ACCUEIL -->
-  <section id="home" class="section">
-    <div class="card">
-      <h2>Bienvenue sur TikTok Shell</h2>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-text">
+      <h1>BIENVENUE CHEZ<br><span>TIKTOK SHELL</span></h1>
       <p>
-        TikTok Shell vous permet de vendre ou d’acheter des comptes TikTok en toute sécurité. 
-        Notre plateforme prend 10% de commission sur chaque vente.
+        Nous vous aidons à acheter et vendre votre compte TikTok
+        de manière sécurisée.
       </p>
     </div>
 
-    <div class="card">
-      <h2>Comment ça fonctionne ?</h2>
-      <ol>
-        <li>Le vendeur dépose ses informations : nom d’utilisateur, nombre d’abonnés, prix, capture d’écran et WhatsApp.</li>
-        <li>L’acheteur paie via la plateforme sécurisée. Nous notifions le vendeur.</li>
-        <li>Une fois vérifié, le vendeur reçoit son argent et le compte est transféré à l’acheteur.</li>
-      </ol>
+    <div class="hero-shield">
+      <img src="https://i.imgur.com/5ZQZ5wT.png" alt="sécurité">
     </div>
   </section>
 
-  <!-- VENDRE -->
-  <section id="sell" class="section hidden">
-    <h2>Vendre un compte TikTok</h2>
-    <input id="username" placeholder="Nom d'utilisateur TikTok">
-    <input id="followers" type="number" placeholder="Nombre d'abonnés">
-    <input id="price" type="number" placeholder="Prix (FCFA)">
-    
-    <select id="payment">
-      <option value="">Moyen de paiement</option>
-      <option>Orange Money</option>
-      <option>Wave</option>
-    </select>
+  <!-- ACTIONS -->
+  <section class="actions">
 
-    <select id="country">
-      <option value="">Indicatif WhatsApp</option>
-      <option>+226 Burkina Faso</option>
-      <option>+225 Côte d'Ivoire</option>
-      <option>+221 Sénégal</option>
-      <option>+33 France</option>
-    </select>
-
-    <input id="whatsapp" placeholder="Numéro WhatsApp">
-    <input type="file" id="screenshot">
-    <button onclick="submitAccount()">Déposer</button>
-
-    <div id="successMessage" class="hidden">
-      <p>✅ Compte déposé avec succès !</p>
+    <div class="action-card">
+      <span class="material-icons">search</span>
+      <h3>ACHETER UN COMPTE</h3>
+      <button onclick="showSection('buy')">Parcourir les Comptes</button>
     </div>
+
+    <div class="action-card">
+      <span class="material-icons">trending_up</span>
+      <h3>VENDRE UN COMPTE</h3>
+      <button onclick="showSection('sell')">Mettre en Vente</button>
+    </div>
+
+    <div class="action-card">
+      <span class="material-icons">person</span>
+      <h3>MON COMPTE</h3>
+      <button onclick="showSection('account')">Gérer mon Profil</button>
+    </div>
+
   </section>
 
-  <!-- ACHETER -->
-  <section id="buy" class="section hidden">
-    <h2>Comptes disponibles</h2>
-    <div id="accountsList" class="grid"></div>
-  </section>
-
-  <!-- MES TRANSACTIONS -->
-  <section id="transactions" class="section hidden">
-    <h2>Mes transactions</h2>
-    <div id="myTransactions"></div>
+  <!-- TRANSACTIONS SECURISEES -->
+  <section class="payments">
+    <h4>Transactions Sécurisées</h4>
+    <div class="payment-logos">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Orange_Money_logo.svg">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/Wave_logo.svg">
+    </div>
   </section>
 
 </div>
-
-<script type="module" src="script.js"></script>
-</body>
-</html>
