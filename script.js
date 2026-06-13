@@ -18,12 +18,13 @@
    (Projet Firebase > Paramètres > Tes applications)
 ═══════════════════════════════════════════════════ */
 const firebaseConfig = {
-  apiKey:            "COLLE_TON_API_KEY_ICI",
-  authDomain:        "COLLE_TON_AUTH_DOMAIN_ICI",
-  projectId:         "COLLE_TON_PROJECT_ID_ICI",
-  storageBucket:     "COLLE_TON_STORAGE_BUCKET_ICI",
-  messagingSenderId: "COLLE_TON_MESSAGING_SENDER_ID_ICI",
-  appId:             "COLLE_TON_APP_ID_ICI"
+  apiKey:            "AIzaSyA2wEZMelhCwNYKs7vtgEFhcXkPxXeTx1U",
+  authDomain:        "shell-toktok.firebaseapp.com",
+  projectId:         "shell-toktok",
+  storageBucket:     "shell-toktok.firebasestorage.app",
+  messagingSenderId: "559812497776",
+  appId:             "1:559812497776:web:aac415e3d6c0bc2afd7fb5",
+  measurementId:     "G-WK90ML0EDK"
 };
 
 /* ═══════════════════════════════════════════════════
@@ -60,6 +61,7 @@ firebase.initializeApp(firebaseConfig);
 const auth      = firebase.auth();
 const db        = firebase.firestore();
 const storage   = firebase.storage();
+const analytics = firebase.analytics(); // Google Analytics intégré
 
 /* ── Variables globales ── */
 let currentUser       = null;
