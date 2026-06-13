@@ -5,19 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TikEscrow – Achat & Vente Sécurisé de Comptes TikTok</title>
   <link rel="stylesheet" href="style.css" />
-  <!-- Firebase SDK (version compat = pas besoin de bundler) -->
+
+  <!-- ═══ FIREBASE SDK ═══ -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
-  <!-- Google Fonts -->
+
+  <!-- ═══ FEDAPAY SDK ═══ -->
+  <script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"></script>
+
+  <!-- ═══ GOOGLE FONTS ═══ -->
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
 </head>
 <body>
 
   <!-- ═══════════════════════════════════════════════
-       ÉCRAN DE CHARGEMENT
+       SPLASH SCREEN
   ═══════════════════════════════════════════════ -->
   <div id="splash-screen">
     <div class="splash-logo">
@@ -28,20 +33,20 @@
   </div>
 
   <!-- ═══════════════════════════════════════════════
-       NAVIGATION
+       NAVBAR
   ═══════════════════════════════════════════════ -->
   <nav id="navbar" class="hidden">
     <div class="nav-inner">
       <div class="nav-logo">🔐 TikEscrow</div>
       <div class="nav-actions">
         <span id="nav-username" class="nav-username"></span>
-        <button id="btn-logout" class="btn-nav" onclick="logout()">Déconnexion</button>
+        <button class="btn-nav" onclick="logout()">Déconnexion</button>
       </div>
     </div>
   </nav>
 
   <!-- ═══════════════════════════════════════════════
-       PAGE : ACCUEIL (non connecté)
+       PAGE : ACCUEIL
   ═══════════════════════════════════════════════ -->
   <section id="page-home" class="page">
     <div class="hero">
@@ -57,7 +62,7 @@
         <div class="step-arrow">→</div>
         <div class="step">
           <div class="step-num">2</div>
-          <p>L'acheteur paie via OTP sécurisé</p>
+          <p>L'acheteur paie via paiement sécurisé</p>
         </div>
         <div class="step-arrow">→</div>
         <div class="step">
@@ -67,12 +72,8 @@
       </div>
 
       <div class="hero-btns">
-        <button class="btn-primary" onclick="showPage('page-auth', 'acheter')">
-          🛒 Acheter un compte
-        </button>
-        <button class="btn-secondary" onclick="showPage('page-auth', 'vendre')">
-          💰 Vendre mon compte
-        </button>
+        <button class="btn-primary" onclick="showPage('page-auth', 'acheter')">🛒 Acheter un compte</button>
+        <button class="btn-secondary" onclick="showPage('page-auth', 'vendre')">💰 Vendre mon compte</button>
       </div>
 
       <div class="trust-badges">
@@ -91,9 +92,9 @@
       <button class="btn-back" onclick="showPage('page-home')">← Retour</button>
       <div class="auth-logo">🔐</div>
       <h2>Connexion / Inscription</h2>
-      <p class="auth-sub">Crée ton compte ou connecte-toi pour continuer</p>
+      <p class="auth-sub">Connecte-toi pour continuer</p>
 
-      <!-- Google -->
+      <!-- Connexion Google -->
       <button class="btn-google" onclick="loginGoogle()">
         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20"/>
         Continuer avec Google
@@ -101,18 +102,23 @@
 
       <div class="auth-divider"><span>ou</span></div>
 
-      <!-- Téléphone -->
+      <!-- Connexion téléphone -->
       <div id="phone-step-1">
-        <label>Numéro de téléphone (avec indicatif ex: +225…)</label>
-        <input type="tel" id="input-phone" placeholder="+2250700000000" />
+        <div class="form-group">
+          <label>Numéro de téléphone (avec indicatif)</label>
+          <input type="tel" id="input-phone" placeholder="+22605765650"/>
+        </div>
         <div id="recaptcha-container"></div>
-        <button class="btn-primary" onclick="sendOTPAuth()">Recevoir le code SMS</button>
+        <button class="btn-primary btn-full" onclick="sendOTPAuth()">Recevoir le code SMS</button>
       </div>
 
       <div id="phone-step-2" class="hidden">
-        <label>Code SMS reçu</label>
-        <input type="text" id="input-sms-code" placeholder="123456" maxlength="6"/>
-        <button class="btn-primary" onclick="verifyOTPAuth()">Vérifier et entrer</button>
+        <div class="form-group">
+          <label>Code SMS reçu</label>
+          <input type="text" id="input-sms-code" placeholder="123456" maxlength="6"/>
+        </div>
+        <button class="btn-primary btn-full" onclick="verifyOTPAuth()">Vérifier et entrer</button>
+        <button class="btn-back" onclick="resetPhoneAuth()">← Changer de numéro</button>
       </div>
 
       <p id="auth-error" class="error-msg"></p>
@@ -144,8 +150,7 @@
         <small>Voir l'état de mes ventes</small>
       </button>
     </div>
-    <!-- Support WhatsApp -->
-    <a class="whatsapp-btn" id="whatsapp-link" href="#" target="_blank">
+    <a class="whatsapp-btn" href="https://wa.me/22605765650" target="_blank">
       💬 Contacter le support WhatsApp
     </a>
   </section>
@@ -157,34 +162,32 @@
     <div class="form-container">
       <button class="btn-back" onclick="showPage('page-dashboard')">← Retour</button>
       <h2>💰 Vendre mon compte TikTok</h2>
-      <p class="form-intro">Remplis le formulaire ci-dessous. Ton compte sera vérifié avant d'être visible.</p>
+      <p class="form-intro">Remplis le formulaire. Ton compte sera vérifié avant d'être visible.</p>
 
       <div class="form-group">
         <label>Nombre d'abonnés</label>
         <input type="number" id="sell-followers" placeholder="ex: 50000" min="1000"/>
       </div>
-
       <div class="form-group">
-        <label>Prix demandé (en FCFA ou USD)</label>
-        <input type="number" id="sell-price" placeholder="ex: 25000"/>
-        <select id="sell-currency">
-          <option value="FCFA">FCFA</option>
-          <option value="USD">USD</option>
-          <option value="EUR">EUR</option>
-        </select>
+        <label>Prix demandé</label>
+        <div style="display:flex;gap:8px;">
+          <input type="number" id="sell-price" placeholder="ex: 25000" style="flex:1"/>
+          <select id="sell-currency" style="width:110px;">
+            <option value="FCFA">FCFA</option>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+          </select>
+        </div>
       </div>
-
       <div class="form-group">
         <label>Pays d'origine du compte</label>
-        <input type="text" id="sell-country" placeholder="ex: Côte d'Ivoire"/>
+        <input type="text" id="sell-country" placeholder="ex: Burkina Faso"/>
       </div>
-
       <div class="form-group">
-        <label>Ton numéro Mobile Money (pour recevoir les fonds)</label>
-        <input type="tel" id="sell-momo" placeholder="+2250700000000"/>
-        <small>90% du prix sera envoyé sur ce numéro après transaction</small>
+        <label>Ton numéro Mobile Money (pour recevoir 90% des fonds)</label>
+        <input type="tel" id="sell-momo" placeholder="+22605765650"/>
+        <small>90% du prix te sera envoyé sur ce numéro après transaction</small>
       </div>
-
       <div class="form-group">
         <label>Capture d'écran du compte (preuve des abonnés)</label>
         <input type="file" id="sell-screenshot" accept="image/*"/>
@@ -212,9 +215,7 @@
         ⚠️ <strong>Important :</strong> Le vendeur doit obligatoirement se déconnecter de son compte TikTok après validation de cette annonce.
       </div>
 
-      <button class="btn-primary btn-full" onclick="submitListing()">
-        🚀 Soumettre pour vérification
-      </button>
+      <button class="btn-primary btn-full" onclick="submitListing()">🚀 Soumettre pour vérification</button>
 
       <p class="disclaimer-small">
         Attention, si vous n'avez pas confiance en la plateforme, ne déposez pas votre compte. Merci de votre compréhension.
@@ -230,13 +231,11 @@
       <button class="btn-back" onclick="showPage('page-dashboard')">← Retour</button>
       <h2>🛒 Comptes disponibles</h2>
       <p class="listings-sub">Tous les comptes ont été vérifiés manuellement par notre équipe.</p>
-
       <div class="filter-bar">
         <input type="number" id="filter-min" placeholder="Abonnés min"/>
         <input type="number" id="filter-max" placeholder="Abonnés max"/>
         <button class="btn-filter" onclick="loadListings()">Filtrer</button>
       </div>
-
       <div id="listings-grid">
         <div class="loading-spinner">Chargement des annonces…</div>
       </div>
@@ -250,19 +249,13 @@
     <div class="detail-container">
       <button class="btn-back" onclick="showPage('page-listings')">← Retour</button>
       <div id="detail-content"></div>
-
       <div class="payment-section">
-        <h3>💳 Paiement sécurisé</h3>
-        <p>Choisis ta méthode de paiement :</p>
-        <div class="payment-methods">
-          <button class="btn-pay" id="btn-cinetpay" onclick="initPayment('cinetpay')">
-            💳 Payer via CinetPay
-          </button>
-          <button class="btn-pay" id="btn-fedapay" onclick="initPayment('fedapay')">
-            💳 Payer via FedaPay
-          </button>
-        </div>
-        <p class="payment-note">🔒 Paiement sécurisé par code OTP. Les identifiants s'affichent instantanément après validation.</p>
+        <h3>💳 Paiement sécurisé via FedaPay</h3>
+        <p style="color:var(--text2);font-size:14px;margin-bottom:16px;">Mobile Money, carte bancaire et plus encore.</p>
+        <button class="btn-primary btn-full" onclick="initPayment()">
+          💳 Payer maintenant
+        </button>
+        <p class="payment-note">🔒 Paiement 100% sécurisé. Les identifiants s'affichent instantanément après validation.</p>
       </div>
     </div>
   </section>
@@ -277,9 +270,7 @@
         <h2>Paiement confirmé !</h2>
         <p>Voici les identifiants de ton compte TikTok :</p>
       </div>
-      <div class="credentials-reveal" id="credentials-reveal">
-        <!-- Rempli dynamiquement -->
-      </div>
+      <div class="credentials-reveal" id="credentials-reveal"></div>
       <div class="delivery-warning">
         ⚠️ Note ces informations maintenant. Elles ne seront affichées qu'une seule fois.
       </div>
@@ -290,7 +281,7 @@
   </section>
 
   <!-- ═══════════════════════════════════════════════
-       PAGE : MES ANNONCES (VENDEUR)
+       PAGE : MES ANNONCES
   ═══════════════════════════════════════════════ -->
   <section id="page-mylistings" class="page hidden">
     <div class="mylistings-container">
@@ -303,7 +294,7 @@
   </section>
 
   <!-- ═══════════════════════════════════════════════
-       MODAL GÉNÉRIQUE
+       MODAL
   ═══════════════════════════════════════════════ -->
   <div id="modal-overlay" class="modal-overlay hidden" onclick="closeModal()">
     <div class="modal-box" onclick="event.stopPropagation()">
