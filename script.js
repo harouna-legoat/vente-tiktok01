@@ -1,22 +1,17 @@
-/* ═══════════════════════════════════════════════════════════════════
-   TIKESCROW — SCRIPT.JS
-   Auteur : TikEscrow Platform
-   ---------------------------------------------------------------
-   GUIDE DE CONFIGURATION :
-   1. Cherche "🔧 FIREBASE CONFIG" et colle ta config Firebase
-   2. Cherche "🔧 CINETPAY CONFIG" et colle ta clé CinetPay
-   3. Cherche "🔧 FEDAPAY CONFIG" et colle ta clé FedaPay
-   4. Cherche "🔧 WHATSAPP CONFIG" et mets ton numéro WhatsApp
-   5. Cherche "🔧 ADMIN CONFIG" pour le numéro Orange Money admin (10%)
-═══════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   TIKESCROW — SCRIPT.JS — VERSION FINALE COMPLÈTE
+   ─────────────────────────────────────────────────────────────
+   ✅ Firebase  : shell-toktok (intégré)
+   ✅ FedaPay   : clé publique pk_live_... (intégrée)
+   ✅ WhatsApp  : +226 05 76 56 50 (intégré)
+   ✅ Admin     : +226 05 76 56 50 — reçoit 10% de commission
+═══════════════════════════════════════════════════════════════ */
 
 "use strict";
 
-/* ═══════════════════════════════════════════════════
-   🔧 FIREBASE CONFIG
-   Remplace cet objet par ta vraie config Firebase
-   (Projet Firebase > Paramètres > Tes applications)
-═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   ✅ CONFIG FIREBASE — shell-toktok
+═══════════════════════════════════════ */
 const firebaseConfig = {
   apiKey:            "AIzaSyA2wEZMelhCwNYKs7vtgEFhcXkPxXeTx1U",
   authDomain:        "shell-toktok.firebaseapp.com",
@@ -27,61 +22,44 @@ const firebaseConfig = {
   measurementId:     "G-WK90ML0EDK"
 };
 
-/* ═══════════════════════════════════════════════════
-   🔧 CINETPAY CONFIG
-   Récupère ta clé sur https://cinetpay.com
-═══════════════════════════════════════════════════ */
-const CINETPAY_API_KEY  = "COLLE_TON_API_KEY_CINETPAY_ICI";
-const CINETPAY_SITE_ID  = "COLLE_TON_SITE_ID_CINETPAY_ICI";
+/* ═══════════════════════════════════════
+   ✅ CONFIG FEDAPAY
+   Clé publique : safe côté client
+   Clé secrète  : sk_live_0xm0j5UdnPdkpval2aCTpALG
+                  → À utiliser UNIQUEMENT dans Firebase Cloud Functions
+═══════════════════════════════════════ */
+const FEDAPAY_PUBLIC_KEY = "pk_live_DXMkqOLzATcQL50WA5nLDcZA";
 
-/* ═══════════════════════════════════════════════════
-   🔧 FEDAPAY CONFIG
-   Récupère ta clé sur https://fedapay.com
-   Utilise la clé publique (pk_live_...)
-═══════════════════════════════════════════════════ */
-const FEDAPAY_PUBLIC_KEY = "COLLE_TA_CLE_PUBLIQUE_FEDAPAY_ICI";
+/* ═══════════════════════════════════════
+   ✅ CONFIG ADMIN & WHATSAPP
+   Numéro Orange Money Burkina Faso : +226 05 76 56 50
+   Reçoit 10% de commission sur chaque vente
+═══════════════════════════════════════ */
+const ADMIN_MOMO_NUMBER  = "+22605765650";
+const WHATSAPP_NUMBER    = "22605765650";
 
-/* ═══════════════════════════════════════════════════
-   🔧 WHATSAPP CONFIG
-   Remplace par ton numéro WhatsApp (avec indicatif, sans +)
-   ex: 2250700000000
-═══════════════════════════════════════════════════ */
-const WHATSAPP_NUMBER = "2250700000000";
-
-/* ═══════════════════════════════════════════════════
-   🔧 ADMIN CONFIG
-   Numéro Orange Money de l'admin qui reçoit 10% de commission
-═══════════════════════════════════════════════════ */
-const ADMIN_MOMO_NUMBER = "+225XXXXXXXXXX"; // 🔧 Remplace par ton numéro Orange Money
-
-/* ═══════════════════════════════════════════════════
+/* ═══════════════════════════════════════
    INITIALISATION FIREBASE
-═══════════════════════════════════════════════════ */
+═══════════════════════════════════════ */
 firebase.initializeApp(firebaseConfig);
 const auth      = firebase.auth();
 const db        = firebase.firestore();
 const storage   = firebase.storage();
-const analytics = firebase.analytics(); // Google Analytics intégré
+const analytics = firebase.analytics();
 
 /* ── Variables globales ── */
-let currentUser       = null;
-let pendingAuthAction = null;  // "acheter" | "vendre" — action après connexion
-let currentListing    = null;  // Annonce en cours d'achat
-let confirmationResult = null; // Pour la vérification OTP téléphone
+let currentUser        = null;
+let pendingAuthAction  = null;
+let currentListing     = null;
+let confirmationResult = null;
 
-/* ═══════════════════════════════════════════════════
-   SPLASH SCREEN & INITIALISATION
-═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   DÉMARRAGE — SPLASH + AUTH STATE
+═══════════════════════════════════════ */
 window.addEventListener("load", () => {
-  // Lien WhatsApp
-  const waLink = document.getElementById("whatsapp-link");
-  if (waLink) waLink.href = `https://wa.me/${WHATSAPP_NUMBER}`;
-
-  // Écouter l'état de connexion Firebase
   auth.onAuthStateChanged(user => {
     currentUser = user;
 
-    // Masquer le splash après 1.5s
     setTimeout(() => {
       const splash = document.getElementById("splash-screen");
       if (splash) {
@@ -90,30 +68,42 @@ window.addEventListener("load", () => {
       }
 
       if (user) {
-        // Utilisateur connecté
         document.getElementById("navbar").classList.remove("hidden");
         document.getElementById("nav-username").textContent =
           user.displayName || user.phoneNumber || user.email || "Utilisateur";
-        // Rediriger vers le tableau de bord
-        showPage("page-dashboard");
-        // Si action en attente (acheter/vendre)
-        if (pendingAuthAction === "vendre") showPage("page-sell");
+
+        if (pendingAuthAction === "vendre")  showPage("page-sell");
         else if (pendingAuthAction === "acheter") showPage("page-listings");
+        else showPage("page-dashboard");
         pendingAuthAction = null;
       } else {
-        // Non connecté : afficher l'accueil
         document.getElementById("navbar").classList.add("hidden");
         showPage("page-home");
       }
     }, 1500);
   });
+
+  // Preview image vendeur
+  const screenshotInput = document.getElementById("sell-screenshot");
+  if (screenshotInput) {
+    screenshotInput.addEventListener("change", e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        document.getElementById("screenshot-preview").innerHTML =
+          `<img src="${ev.target.result}" alt="Aperçu"/>`;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
 });
 
-/* ═══════════════════════════════════════════════════
-   NAVIGATION ENTRE PAGES
-═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════ */
 function showPage(pageId, action = null) {
-  // Si action (acheter/vendre) et non connecté → aller à l'auth
+  // Redirection vers auth si non connecté
   if ((pageId === "page-sell" || pageId === "page-listings") && !currentUser) {
     pendingAuthAction = action || (pageId === "page-sell" ? "vendre" : "acheter");
     pageId = "page-auth";
@@ -129,60 +119,62 @@ function showPage(pageId, action = null) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  // Actions au changement de page
+  // Actions spécifiques
   if (pageId === "page-listings")   loadListings();
   if (pageId === "page-mylistings") loadMyListings();
+
+  // Réinitialiser les erreurs auth
+  const authErr = document.getElementById("auth-error");
+  if (authErr) authErr.textContent = "";
 }
 
-/* ═══════════════════════════════════════════════════
-   AUTHENTIFICATION — GOOGLE
-═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   AUTH — CONNEXION GOOGLE
+═══════════════════════════════════════ */
 function loginGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider)
-    .then(result => {
-      // onAuthStateChanged s'occupe du reste
-    })
-    .catch(err => {
-      showAuthError("Erreur Google : " + err.message);
-    });
+  auth.signInWithPopup(provider).catch(err => {
+    showAuthError("Erreur Google : " + err.message);
+  });
 }
 
-/* ═══════════════════════════════════════════════════
-   AUTHENTIFICATION — TÉLÉPHONE (OTP)
-   Étape 1 : Envoyer le SMS
-═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   AUTH — TÉLÉPHONE ÉTAPE 1 : Envoyer SMS
+═══════════════════════════════════════ */
 function sendOTPAuth() {
   const phone = document.getElementById("input-phone").value.trim();
   if (!phone || phone.length < 8) {
-    showAuthError("Numéro de téléphone invalide.");
+    showAuthError("Numéro de téléphone invalide. Ex: +22605765650");
     return;
   }
 
-  // ReCAPTCHA invisible (obligatoire pour Firebase Phone Auth)
+  // Réinitialiser reCAPTCHA si déjà créé
+  if (window.recaptchaVerifier) {
+    try { window.recaptchaVerifier.clear(); } catch(e) {}
+  }
+
   window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier("recaptcha-container", {
     size: "invisible",
-    callback: () => {} // ReCAPTCHA résolu automatiquement
+    callback: () => {}
   });
 
   auth.signInWithPhoneNumber(phone, window.recaptchaVerifier)
     .then(result => {
       confirmationResult = result;
-      // Afficher le champ de saisie du code SMS
       document.getElementById("phone-step-1").classList.add("hidden");
       document.getElementById("phone-step-2").classList.remove("hidden");
     })
     .catch(err => {
-      showAuthError("Erreur d'envoi SMS : " + err.message);
-      // Réinitialiser le reCAPTCHA en cas d'erreur
-      if (window.recaptchaVerifier) window.recaptchaVerifier.clear();
+      showAuthError("Erreur SMS : " + err.message);
+      if (window.recaptchaVerifier) {
+        try { window.recaptchaVerifier.clear(); } catch(e) {}
+      }
     });
 }
 
-/* ═══════════════════════════════════════════════════
-   AUTHENTIFICATION — TÉLÉPHONE (OTP)
-   Étape 2 : Vérifier le code SMS
-═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   AUTH — TÉLÉPHONE ÉTAPE 2 : Vérifier SMS
+═══════════════════════════════════════ */
 function verifyOTPAuth() {
   const code = document.getElementById("input-sms-code").value.trim();
   if (!code || code.length < 4) {
@@ -193,14 +185,20 @@ function verifyOTPAuth() {
     showAuthError("Session expirée. Recommence depuis le début.");
     return;
   }
+  confirmationResult.confirm(code).catch(err => {
+    showAuthError("Code incorrect : " + err.message);
+  });
+}
 
-  confirmationResult.confirm(code)
-    .then(() => {
-      // onAuthStateChanged prend le relais
-    })
-    .catch(err => {
-      showAuthError("Code incorrect : " + err.message);
-    });
+/* ═══════════════════════════════════════
+   AUTH — RESET TÉLÉPHONE
+═══════════════════════════════════════ */
+function resetPhoneAuth() {
+  confirmationResult = null;
+  document.getElementById("phone-step-1").classList.remove("hidden");
+  document.getElementById("phone-step-2").classList.add("hidden");
+  document.getElementById("input-phone").value = "";
+  document.getElementById("input-sms-code").value = "";
 }
 
 function showAuthError(msg) {
@@ -208,9 +206,9 @@ function showAuthError(msg) {
   if (el) el.textContent = msg;
 }
 
-/* ═══════════════════════════════════════════════════
-   DÉCONNEXION
-═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   AUTH — DÉCONNEXION
+═══════════════════════════════════════ */
 function logout() {
   auth.signOut().then(() => {
     currentUser = null;
@@ -218,13 +216,12 @@ function logout() {
   });
 }
 
-/* ═══════════════════════════════════════════════════
+/* ═══════════════════════════════════════
    VENDEUR — SOUMETTRE UNE ANNONCE
-═══════════════════════════════════════════════════ */
+═══════════════════════════════════════ */
 async function submitListing() {
   if (!currentUser) { showPage("page-auth", "vendre"); return; }
 
-  // Récupérer les valeurs
   const followers   = parseInt(document.getElementById("sell-followers").value);
   const price       = parseFloat(document.getElementById("sell-price").value);
   const currency    = document.getElementById("sell-currency").value;
@@ -235,63 +232,51 @@ async function submitListing() {
   const tiktokEmail = document.getElementById("sell-tiktok-email").value.trim();
   const screenshot  = document.getElementById("sell-screenshot").files[0];
 
-  // Validation basique
   if (!followers || !price || !country || !momoNumber || !tiktokUser || !tiktokPass) {
     showModal("⚠️ Champs manquants", "Merci de remplir tous les champs obligatoires.");
     return;
   }
 
   try {
-    showModal("⏳ Traitement…", "Upload de la capture et enregistrement en cours…");
+    showModal("⏳ Envoi en cours…", "Upload et enregistrement en cours. Merci de patienter.");
 
-    // 1. Uploader la capture d'écran sur Firebase Storage
+    // Upload capture d'écran sur Firebase Storage
     let screenshotUrl = "";
     if (screenshot) {
-      const storageRef = storage.ref(`screenshots/${currentUser.uid}_${Date.now()}`);
-      const snap = await storageRef.put(screenshot);
+      const ref  = storage.ref(`screenshots/${currentUser.uid}_${Date.now()}`);
+      const snap = await ref.put(screenshot);
       screenshotUrl = await snap.ref.getDownloadURL();
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // ⚠️ SÉCURITÉ IMPORTANTE :
-    // Les identifiants TikTok sont stockés dans Firestore.
-    // Dans une vraie production, tu dois chiffrer tiktokPass
-    // côté serveur (Firebase Cloud Functions + chiffrement AES)
-    // avant de le stocker. Ne jamais stocker un mot de passe en clair.
-    // ─────────────────────────────────────────────────────────────
-    const listingData = {
+    // Enregistrement dans Firestore
+    // ⚠️ En production : chiffrer tiktokPass avec Firebase Cloud Functions
+    await db.collection("listings").add({
       sellerId:     currentUser.uid,
       sellerPhone:  currentUser.phoneNumber || currentUser.email || "",
       followers,
       price,
       currency,
       country,
-      momoNumber,       // Numéro Mobile Money vendeur (recevra 90%)
+      momoNumber,     // Numéro du vendeur → recevra 90% du prix
       screenshotUrl,
-      // Identifiants chiffrés (à chiffrer en production)
       tiktokUser,
-      tiktokPass,       // 🔧 En production : chiffrer avant stockage
+      tiktokPass,     // ⚠️ À chiffrer en production via Cloud Functions
       tiktokEmail,
-      status:     "pending",  // En attente de validation admin
-      createdAt:  firebase.firestore.FieldValue.serverTimestamp()
-    };
-
-    await db.collection("listings").add(listingData);
+      status:    "pending", // En attente de validation admin
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
 
     closeModal();
     showModal(
       "✅ Annonce soumise !",
-      "Ton compte a bien été soumis.\n\nIl sera visible par les acheteurs uniquement après vérification manuelle par notre équipe.\n\n⚠️ Pense à te déconnecter de ton compte TikTok maintenant."
+      "Ton compte a été soumis avec succès.\n\nIl sera visible par les acheteurs uniquement après vérification manuelle par notre équipe.\n\n⚠️ Déconnecte-toi de ton compte TikTok maintenant !"
     );
 
-    // Réinitialiser le formulaire
-    document.getElementById("sell-followers").value = "";
-    document.getElementById("sell-price").value = "";
-    document.getElementById("sell-country").value = "";
-    document.getElementById("sell-momo").value = "";
-    document.getElementById("sell-tiktok-user").value = "";
-    document.getElementById("sell-tiktok-pass").value = "";
-    document.getElementById("sell-tiktok-email").value = "";
+    // Reset formulaire
+    ["sell-followers","sell-price","sell-country","sell-momo",
+     "sell-tiktok-user","sell-tiktok-pass","sell-tiktok-email"].forEach(id => {
+      document.getElementById(id).value = "";
+    });
     document.getElementById("sell-screenshot").value = "";
     document.getElementById("screenshot-preview").innerHTML = "";
 
@@ -301,37 +286,19 @@ async function submitListing() {
   }
 }
 
-// Prévisualiser la capture d'écran
-document.addEventListener("DOMContentLoaded", () => {
-  const screenshotInput = document.getElementById("sell-screenshot");
-  if (screenshotInput) {
-    screenshotInput.addEventListener("change", e => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = ev => {
-          document.getElementById("screenshot-preview").innerHTML =
-            `<img src="${ev.target.result}" alt="Aperçu"/>`;
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-  }
-});
-
-/* ═══════════════════════════════════════════════════
-   ACHETEUR — CHARGER LES ANNONCES APPROUVÉES
-═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   ACHETEUR — CHARGER LES ANNONCES
+═══════════════════════════════════════ */
 async function loadListings() {
   const grid = document.getElementById("listings-grid");
   if (!grid) return;
   grid.innerHTML = '<div class="loading-spinner">Chargement des annonces…</div>';
 
   try {
-    const minFollowers = parseInt(document.getElementById("filter-min")?.value) || 0;
-    const maxFollowers = parseInt(document.getElementById("filter-max")?.value) || 999999999;
+    const minF = parseInt(document.getElementById("filter-min")?.value) || 0;
+    const maxF = parseInt(document.getElementById("filter-max")?.value) || 999999999;
 
-    // Charger uniquement les annonces avec status = "approved" (validées par l'admin)
+    // Uniquement les annonces validées par l'admin (status = "approved")
     const snap = await db.collection("listings")
       .where("status", "==", "approved")
       .orderBy("createdAt", "desc")
@@ -340,10 +307,10 @@ async function loadListings() {
 
     const listings = snap.docs
       .map(doc => ({ id: doc.id, ...doc.data() }))
-      .filter(l => l.followers >= minFollowers && l.followers <= maxFollowers);
+      .filter(l => l.followers >= minF && l.followers <= maxF);
 
     if (listings.length === 0) {
-      grid.innerHTML = '<div class="loading-spinner">Aucun compte disponible pour le moment.</div>';
+      grid.innerHTML = '<div class="loading-spinner">Aucun compte disponible pour le moment. Reviens bientôt !</div>';
       return;
     }
 
@@ -355,206 +322,173 @@ async function loadListings() {
         </div>
         <div class="listing-meta">
           <span>🌍 ${l.country || "–"}</span>
-          <span>💳 10% commission incluse</span>
+          <span>✅ Vérifié</span>
         </div>
         ${l.screenshotUrl ? `<img src="${l.screenshotUrl}" alt="Capture TikTok" loading="lazy"/>` : ""}
       </div>
     `).join("");
 
   } catch (err) {
-    grid.innerHTML = `<div class="loading-spinner">Erreur : ${err.message}</div>`;
+    grid.innerHTML = `<div class="loading-spinner">Erreur de chargement : ${err.message}</div>`;
   }
 }
 
-/* ═══════════════════════════════════════════════════
-   ACHETEUR — OUVRIR UNE ANNONCE EN DÉTAIL
-═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   ACHETEUR — OUVRIR UNE ANNONCE
+═══════════════════════════════════════ */
 async function openListing(listingId) {
+  if (!currentUser) { showPage("page-auth", "acheter"); return; }
+
   try {
     const doc  = await db.collection("listings").doc(listingId).get();
-    const data = { id: doc.id, ...doc.data() };
-    currentListing = data;
+    if (!doc.exists) { showModal("❌ Erreur", "Annonce introuvable."); return; }
 
-    const content = document.getElementById("detail-content");
-    content.innerHTML = `
+    currentListing = { id: doc.id, ...doc.data() };
+
+    document.getElementById("detail-content").innerHTML = `
       <div class="detail-card">
         <h3>📊 Détails du compte</h3>
-        <div class="detail-row"><span class="dr-label">Abonnés</span><span class="dr-value">${formatFollowers(data.followers)}</span></div>
-        <div class="detail-row"><span class="dr-label">Prix</span><span class="dr-value">${formatPrice(data.price, data.currency)}</span></div>
-        <div class="detail-row"><span class="dr-label">Pays d'origine</span><span class="dr-value">${data.country || "–"}</span></div>
-        <div class="detail-row"><span class="dr-label">Commission plateforme</span><span class="dr-value">10%</span></div>
-        ${data.screenshotUrl ? `<img src="${data.screenshotUrl}" alt="Capture du compte"/>` : ""}
+        <div class="detail-row">
+          <span class="dr-label">Abonnés</span>
+          <span class="dr-value">${formatFollowers(currentListing.followers)}</span>
+        </div>
+        <div class="detail-row">
+          <span class="dr-label">Prix</span>
+          <span class="dr-value">${formatPrice(currentListing.price, currentListing.currency)}</span>
+        </div>
+        <div class="detail-row">
+          <span class="dr-label">Pays d'origine</span>
+          <span class="dr-value">${currentListing.country || "–"}</span>
+        </div>
+        <div class="detail-row">
+          <span class="dr-label">Commission plateforme</span>
+          <span class="dr-value">10% inclus</span>
+        </div>
+        ${currentListing.screenshotUrl
+          ? `<img src="${currentListing.screenshotUrl}" alt="Capture du compte"/>`
+          : ""}
       </div>
     `;
 
     showPage("page-detail");
 
   } catch (err) {
-    showModal("❌ Erreur", "Impossible de charger l'annonce.");
+    showModal("❌ Erreur", "Impossible de charger l'annonce : " + err.message);
   }
 }
 
-/* ═══════════════════════════════════════════════════
-   PAIEMENT — INITIALISER
-   Appelé quand l'acheteur clique sur CinetPay ou FedaPay
-═══════════════════════════════════════════════════ */
-async function initPayment(provider) {
-  if (!currentUser) { showPage("page-auth", "acheter"); return; }
-  if (!currentListing) { showModal("❌ Erreur", "Aucune annonce sélectionnée."); return; }
+/* ═══════════════════════════════════════
+   PAIEMENT — LANCER FEDAPAY
+   Commission : 10% → ADMIN_MOMO_NUMBER (+22605765650)
+                90% → momoNumber du vendeur
+═══════════════════════════════════════ */
+async function initPayment() {
+  if (!currentUser)   { showPage("page-auth", "acheter"); return; }
+  if (!currentListing){ showModal("❌ Erreur", "Aucune annonce sélectionnée."); return; }
+
+  // Vérifier que le SDK FedaPay est chargé
+  if (typeof FedaPay === "undefined") {
+    showModal("❌ Erreur SDK", "Le service de paiement n'est pas disponible. Vérifie ta connexion internet et recharge la page.");
+    return;
+  }
 
   const amount      = currentListing.price;
-  const currency    = currentListing.currency === "FCFA" ? "XOF" : currentListing.currency;
   const transactionId = `TIK_${Date.now()}_${Math.random().toString(36).substr(2,6).toUpperCase()}`;
 
-  // Enregistrer la transaction en attente dans Firestore
-  await db.collection("transactions").add({
-    listingId:     currentListing.id,
-    buyerId:       currentUser.uid,
-    sellerId:      currentListing.sellerId,
-    amount,
-    currency:      currentListing.currency,
-    provider,
-    transactionId,
-    status:        "pending",
-    createdAt:     firebase.firestore.FieldValue.serverTimestamp()
-  });
+  try {
+    // Enregistrer la transaction en attente dans Firestore
+    await db.collection("transactions").add({
+      listingId:    currentListing.id,
+      buyerId:      currentUser.uid,
+      sellerId:     currentListing.sellerId,
+      sellerMomo:   currentListing.momoNumber, // Recevra 90%
+      adminMomo:    ADMIN_MOMO_NUMBER,          // Recevra 10%
+      amount,
+      currency:     currentListing.currency,
+      commission:   Math.round(amount * 0.10), // 10% admin
+      sellerShare:  Math.round(amount * 0.90), // 90% vendeur
+      transactionId,
+      status:       "pending",
+      createdAt:    firebase.firestore.FieldValue.serverTimestamp()
+    });
 
-  if (provider === "cinetpay") {
-    initCinetPay(amount, currency, transactionId);
-  } else if (provider === "fedapay") {
-    initFedaPay(amount, currency, transactionId);
+  } catch (err) {
+    showModal("❌ Erreur", "Impossible d'initialiser le paiement : " + err.message);
+    return;
   }
+
+  // Ouvrir la popup FedaPay
+  FedaPay.init({
+    public_key:  FEDAPAY_PUBLIC_KEY,
+    transaction: {
+      amount:      amount,
+      description: `Achat compte TikTok – ${formatFollowers(currentListing.followers)} abonnés`,
+      custom_metadata: {
+        transactionId,
+        listingId:  currentListing.id,
+        buyerId:    currentUser.uid
+      }
+    },
+    customer: {
+      email:        currentUser.email        || "client@tikescrow.com",
+      phone_number: currentUser.phoneNumber  || ""
+    },
+    onComplete: function(object) {
+      if (object.reason === FedaPay.DIALOG_DISMISSED) {
+        showModal("❌ Paiement annulé", "Tu as annulé le paiement. Tu peux réessayer quand tu veux.");
+      } else {
+        // Paiement réussi → livrer les identifiants
+        onPaymentSuccess(transactionId);
+      }
+    }
+  }).open();
 }
 
-/* ═══════════════════════════════════════════════════
-   PAIEMENT — CINETPAY
-   Documentation : https://docs.cinetpay.com
-   
-   🔧 Pour que ça fonctionne :
-   1. Colle ta clé dans CINETPAY_API_KEY et CINETPAY_SITE_ID
-   2. Ajoute le SDK CinetPay dans index.html :
-      <script src="https://cdn.cinetpay.com/seamless/main.js"></script>
-═══════════════════════════════════════════════════ */
-function initCinetPay(amount, currency, transactionId) {
-  /* ─────────────────────────────────────────────
-     🔧 CINETPAY INTEGRATION
-     Décommente ce bloc une fois le SDK chargé et ta clé configurée.
-     
-     CinetPay.setConfig({
-       apikey:        CINETPAY_API_KEY,
-       site_id:       CINETPAY_SITE_ID,
-       notify_url:    "https://ton-domaine.com/notify",  // URL de callback serveur
-       mode:          "PRODUCTION"  // ou "TEST" pour les tests
-     });
-     CinetPay.getCheckout({
-       transaction_id: transactionId,
-       amount:         amount,
-       currency:       currency,
-       channels:       "ALL",
-       description:    "Achat compte TikTok via TikEscrow",
-       customer_id:    currentUser.uid,
-     });
-     CinetPay.waitResponse(data => {
-       if (data.status === "ACCEPTED") {
-         onPaymentSuccess(transactionId);
-       } else {
-         showModal("❌ Paiement échoué", "Le paiement n'a pas été validé. Réessaie.");
-       }
-     });
-     CinetPay.onError(data => {
-       showModal("❌ Erreur CinetPay", data.description || "Erreur de paiement.");
-     });
-  ───────────────────────────────────────────── */
-  showModal(
-    "💳 CinetPay – Mode démo",
-    `Montant : ${formatPrice(amount, currentListing.currency)}\n\nID transaction : ${transactionId}\n\n🔧 Connecte ta vraie clé CinetPay dans script.js pour activer le vrai paiement.\n\nCliquer OK simule un paiement réussi (démo uniquement).`,
-    () => onPaymentSuccess(transactionId)
-  );
-}
-
-/* ═══════════════════════════════════════════════════
-   PAIEMENT — FEDAPAY
-   Documentation : https://docs.fedapay.com
-   
-   🔧 Pour que ça fonctionne :
-   1. Colle ta clé publique dans FEDAPAY_PUBLIC_KEY
-   2. Ajoute le SDK FedaPay dans index.html :
-      <script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"></script>
-═══════════════════════════════════════════════════ */
-function initFedaPay(amount, currency, transactionId) {
-  /* ─────────────────────────────────────────────
-     🔧 FEDAPAY INTEGRATION
-     Décommente ce bloc une fois le SDK chargé et ta clé configurée.
-     
-     FedaPay.init({
-       public_key:     FEDAPAY_PUBLIC_KEY,
-       transaction: {
-         amount:      amount,
-         description: "Achat compte TikTok",
-         custom_metadata: { transactionId }
-       },
-       customer: {
-         email: currentUser.email || "client@tikescrow.com",
-         phone_number: currentUser.phoneNumber || ""
-       },
-       onComplete: function(object) {
-         if (object.reason === FedaPay.DIALOG_DISMISSED) {
-           showModal("❌ Annulé", "Tu as annulé le paiement.");
-         } else {
-           onPaymentSuccess(transactionId);
-         }
-       }
-     }).open();
-  ───────────────────────────────────────────── */
-  showModal(
-    "💳 FedaPay – Mode démo",
-    `Montant : ${formatPrice(amount, currentListing.currency)}\n\nID transaction : ${transactionId}\n\n🔧 Connecte ta vraie clé FedaPay dans script.js pour activer le vrai paiement.\n\nCliquer OK simule un paiement réussi (démo uniquement).`,
-    () => onPaymentSuccess(transactionId)
-  );
-}
-
-/* ═══════════════════════════════════════════════════
-   PAIEMENT — SUCCÈS : LIVRAISON DES IDENTIFIANTS
-   
-   ⚠️ LOGIQUE DE COMMISSION (10% admin / 90% vendeur) :
-   Ce calcul se fait idéalement dans une Firebase Cloud Function
-   déclenchée après confirmation de paiement côté serveur.
-   Voici la logique à implémenter côté backend :
-   
-   const commission  = amount * 0.10;   → envoyé à ADMIN_MOMO_NUMBER
-   const sellerShare = amount * 0.90;   → envoyé à listing.momoNumber
-   
-   Utilise l'API de versement de CinetPay ou FedaPay pour
-   déclencher les virements automatiquement.
-═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   PAIEMENT RÉUSSI — LIVRAISON IDENTIFIANTS
+═══════════════════════════════════════ */
 async function onPaymentSuccess(transactionId) {
-  closeModal();
-
   if (!currentListing) return;
 
   try {
-    // 1. Mettre à jour le statut de la transaction
+    // 1. Mettre à jour la transaction → completed
     const txSnap = await db.collection("transactions")
       .where("transactionId", "==", transactionId)
       .limit(1).get();
 
     if (!txSnap.empty) {
       await txSnap.docs[0].ref.update({
-        status:    "completed",
-        paidAt:    firebase.firestore.FieldValue.serverTimestamp()
+        status: "completed",
+        paidAt: firebase.firestore.FieldValue.serverTimestamp()
       });
     }
 
     // 2. Marquer l'annonce comme vendue
     await db.collection("listings").doc(currentListing.id).update({
-      status: "sold",
-      soldAt: firebase.firestore.FieldValue.serverTimestamp(),
+      status:  "sold",
+      soldAt:  firebase.firestore.FieldValue.serverTimestamp(),
       buyerId: currentUser.uid
     });
 
-    // 3. Afficher les identifiants à l'acheteur
-    const reveal = document.getElementById("credentials-reveal");
-    reveal.innerHTML = `
+    // 3. Notifier l'admin pour déclencher les virements
+    //    10% → ADMIN_MOMO_NUMBER | 90% → vendeur
+    await db.collection("admin_notifications").add({
+      type:          "payment_received",
+      transactionId,
+      listingId:     currentListing.id,
+      amount:        currentListing.price,
+      currency:      currentListing.currency,
+      commission:    Math.round(currentListing.price * 0.10),
+      sellerShare:   Math.round(currentListing.price * 0.90),
+      sellerMomo:    currentListing.momoNumber,
+      adminMomo:     ADMIN_MOMO_NUMBER,
+      message:       `Paiement reçu. Envoyer ${Math.round(currentListing.price * 0.90)} ${currentListing.currency} au vendeur (${currentListing.momoNumber}) et garder ${Math.round(currentListing.price * 0.10)} ${currentListing.currency} de commission.`,
+      createdAt:     firebase.firestore.FieldValue.serverTimestamp(),
+      read:          false
+    });
+
+    // 4. Afficher les identifiants à l'acheteur
+    document.getElementById("credentials-reveal").innerHTML = `
       <div class="cred-row">
         <span class="cred-label">Nom d'utilisateur TikTok</span>
         <span class="cred-value">@${currentListing.tiktokUser}</span>
@@ -569,7 +503,7 @@ async function onPaymentSuccess(transactionId) {
         <span class="cred-value">${currentListing.tiktokEmail}</span>
       </div>` : ""}
       <div class="cred-row">
-        <span class="cred-label">Pays</span>
+        <span class="cred-label">Pays du compte</span>
         <span class="cred-value">${currentListing.country}</span>
       </div>
     `;
@@ -578,13 +512,16 @@ async function onPaymentSuccess(transactionId) {
     showPage("page-delivery");
 
   } catch (err) {
-    showModal("❌ Erreur critique", "Paiement reçu mais erreur lors de la livraison. Contacte le support WhatsApp immédiatement.");
+    showModal(
+      "⚠️ Paiement reçu — Erreur de livraison",
+      "Ton paiement a bien été reçu mais une erreur technique est survenue. Contacte immédiatement le support WhatsApp avec ton ID de transaction : " + transactionId
+    );
   }
 }
 
-/* ═══════════════════════════════════════════════════
+/* ═══════════════════════════════════════
    VENDEUR — MES ANNONCES
-═══════════════════════════════════════════════════ */
+═══════════════════════════════════════ */
 async function loadMyListings() {
   const grid = document.getElementById("mylistings-grid");
   if (!grid || !currentUser) return;
@@ -602,27 +539,28 @@ async function loadMyListings() {
       return;
     }
 
+    const statusLabels = {
+      pending:   "⏳ En attente de vérification",
+      approved:  "✅ En ligne – visible aux acheteurs",
+      sold:      "💰 Vendu",
+      cancelled: "❌ Annulé"
+    };
+
     grid.innerHTML = snap.docs.map(doc => {
       const l = { id: doc.id, ...doc.data() };
-      const statusLabel = {
-        pending:   "En attente de vérification",
-        approved:  "En ligne – visible aux acheteurs",
-        sold:      "Vendu ✓",
-        cancelled: "Annulé"
-      }[l.status] || l.status;
-
       const canCancel = l.status === "pending" || l.status === "approved";
-
       return `
         <div class="mylisting-card">
           <div class="mylisting-header">
             <span class="mylisting-title">${formatFollowers(l.followers)} abonnés</span>
-            <span class="status-badge status-${l.status}">${statusLabel}</span>
+            <span class="status-badge status-${l.status}">${statusLabels[l.status] || l.status}</span>
           </div>
           <div class="mylisting-meta">
-            💰 ${formatPrice(l.price, l.currency)} • 🌍 ${l.country || "–"}
+            💰 ${formatPrice(l.price, l.currency)} &nbsp;•&nbsp; 🌍 ${l.country || "–"}
           </div>
-          ${canCancel ? `<button class="btn-cancel" onclick="cancelListing('${l.id}')">Annuler cette annonce</button>` : ""}
+          ${canCancel
+            ? `<button class="btn-cancel" onclick="cancelListing('${l.id}')">Annuler cette annonce</button>`
+            : ""}
         </div>
       `;
     }).join("");
@@ -632,10 +570,9 @@ async function loadMyListings() {
   }
 }
 
-/* ═══════════════════════════════════════════════════
+/* ═══════════════════════════════════════
    VENDEUR — ANNULER UNE ANNONCE
-   L'admin sera notifié et renverra les identifiants manuellement
-═══════════════════════════════════════════════════ */
+═══════════════════════════════════════ */
 async function cancelListing(listingId) {
   if (!confirm("Confirmer l'annulation ? L'administrateur te renverra tes identifiants sous 24h.")) return;
 
@@ -645,18 +582,18 @@ async function cancelListing(listingId) {
       cancelledAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    // Créer une notification pour l'admin dans Firestore
-    // 🔧 L'admin peut surveiller la collection "admin_notifications"
+    // Notifier l'admin pour renvoyer les identifiants manuellement
     await db.collection("admin_notifications").add({
       type:      "listing_cancelled",
       listingId,
       sellerId:  currentUser.uid,
-      message:   `Le vendeur ${currentUser.uid} a annulé son annonce ${listingId}. Renvoyer les identifiants.`,
+      sellerPhone: currentUser.phoneNumber || currentUser.email || "",
+      message:   `Annulation de l'annonce ${listingId}. Renvoyer les identifiants TikTok au vendeur.`,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       read:      false
     });
 
-    showModal("✅ Annonce annulée", "Ton annonce a été annulée. Notre équipe te renverra tes identifiants dans les plus brefs délais.");
+    showModal("✅ Annonce annulée", "Ton annonce a été annulée. Notre équipe te renverra tes identifiants dans les 24h.");
     loadMyListings();
 
   } catch (err) {
@@ -664,9 +601,9 @@ async function cancelListing(listingId) {
   }
 }
 
-/* ═══════════════════════════════════════════════════
-   MODAL UTILITAIRE
-═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   MODAL
+═══════════════════════════════════════ */
 function showModal(title, message, onClose = null) {
   const overlay = document.getElementById("modal-overlay");
   const content = document.getElementById("modal-content");
@@ -675,8 +612,6 @@ function showModal(title, message, onClose = null) {
     <p>${message.replace(/\n/g, "<br/>")}</p>
   `;
   overlay.classList.remove("hidden");
-
-  // Callback optionnel quand on ferme
   overlay._onClose = onClose;
 }
 
@@ -689,9 +624,9 @@ function closeModal() {
   }
 }
 
-/* ═══════════════════════════════════════════════════
-   UTILITAIRES D'AFFICHAGE
-═══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   UTILITAIRES
+═══════════════════════════════════════ */
 function formatFollowers(n) {
   if (!n) return "–";
   if (n >= 1000000) return (n / 1000000).toFixed(1) + "M";
